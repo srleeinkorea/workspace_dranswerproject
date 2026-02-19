@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이사라 | Title Sequence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+
+body{
+  margin:0;
+  background:#ffffff;
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
+  color:#0f172a;
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.1) 100%);
+}
+
+.subtitle{
+  position:absolute;
+  top:60%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:300;
+  font-size:20px;
+  color:#475569;
+  opacity:0;
+  transition:2s ease;
+}
+
+.big-title{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:64px;
+  font-weight:900;
+  text-align:center;
+  opacity:0;
+  transition:2s ease;
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="subtitle" id="subtitle">Healthcare AI Strategist · Product Leader</div>
+<div class="big-title" id="bigTitle">Building Scalable AI in Healthcare.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas:document.getElementById("bg"),alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+camera.position.z = 40; // 먼 거리에서 시작
+
+function textToPoints(text){
+  const canvas=document.createElement("canvas");
+  const ctx=canvas.getContext("2d");
+  canvas.width=1600;
+  canvas.height=400;
+  ctx.font="bold 240px Arial";
+  ctx.textAlign="center";
+  ctx.fillText(text,canvas.width/2,260);
+  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const pts=[];
+  for(let y=0;y<canvas.height;y+=4){
+    for(let x=0;x<canvas.width;x+=4){
+      const i=(y*canvas.width+x)*4;
+      if(data[i+3]>150){
+        pts.push({
+          x:(x-canvas.width/2)/140,
+          y:(canvas.height/2-y)/140,
+          z:(Math.random()-0.5)*4
+        });
+      }
+    }
+  }
+  return pts;
+}
+
+const pts=textToPoints("이사라");
+const count=pts.length;
+
+const geo=new THREE.BufferGeometry();
+const pos=new Float32Array(count*3);
+
+for(let i=0;i<count;i++){
+  pos[i*3]=(Math.random()-0.5)*80;
+  pos[i*3+1]=(Math.random()-0.5)*80;
+  pos[i*3+2]=(Math.random()-0.5)*80;
+}
+
+geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+
+const mat=new THREE.PointsMaterial({
+  size:0.05,
+  color:0x0f172a,
+  transparent:true,
+  opacity:0.9
+});
+
+const particles=new THREE.Points(geo,mat);
+scene.add(particles);
+
+let phase=0; // 0: form, 1: hold, 2: flythrough
+
+function animate(){
+  requestAnimationFrame(animate);
+
+  const arr=geo.attributes.position.array;
+
+  if(phase===0){
+    for(let i=0;i<count;i++){
+      arr[i*3]+= (pts[i].x-arr[i*3])*0.02;
+      arr[i*3+1]+= (pts[i].y-arr[i*3+1])*0.02;
+      arr[i*3+2]+= (pts[i].z-arr[i*3+2])*0.02;
+    }
+  }
+
+  if(phase===2){
+    camera.position.z -= 0.3; // 카메라가 이름을 통과
+  }
+
+  geo.attributes.position.needsUpdate=true;
+  renderer.render(scene,camera);
+}
+
+animate();
+
+/* 타이틀 시퀀스 타이밍 */
+
+setTimeout(()=>{
+  document.getElementById("subtitle").style.opacity=1;
+},4000);
+
+setTimeout(()=>{
+  phase=1;
+},5000);
+
+setTimeout(()=>{
+  phase=2;
+  document.getElementById("bigTitle").style.opacity=1;
+},7000);
+
+</script>
+</body>
+</html>
