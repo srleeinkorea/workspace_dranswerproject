@@ -1,218 +1,166 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>소아 만성호흡부전 재택 모니터링 플랫폼 | Strategic Alignment</title>
-
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"/>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이사라 | Title Sequence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
 <style>
+
 body{
   margin:0;
-  font-family:Pretendard, sans-serif;
   background:#ffffff;
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
   color:#0f172a;
-  line-height:1.8;
 }
 
-.wrap{
-  max-width:1080px;
-  margin:0 auto;
-  padding:100px 24px;
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
 }
 
-h1{
-  font-size:32px;
-  font-weight:800;
-  margin-bottom:20px;
-  letter-spacing:-0.02em;
+.overlay{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.1) 100%);
 }
 
 .subtitle{
-  font-size:16px;
+  position:absolute;
+  top:60%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:300;
+  font-size:20px;
   color:#475569;
-  margin-bottom:60px;
+  opacity:0;
+  transition:2s ease;
 }
 
-h2{
-  font-size:22px;
-  font-weight:700;
-  margin-top:80px;
-  margin-bottom:24px;
+.big-title{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:64px;
+  font-weight:900;
+  text-align:center;
+  opacity:0;
+  transition:2s ease;
 }
 
-.block{
-  background:#f8fafc;
-  border:1px solid #e2e8f0;
-  padding:36px;
-  border-radius:12px;
-  margin-bottom:40px;
-}
-
-.highlight{
-  font-weight:600;
-  color:#1e3a8a;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:32px;
-}
-
-.card{
-  border-left:4px solid #2563eb;
-  padding-left:20px;
-}
-
-.metric{
-  font-size:28px;
-  font-weight:800;
-  color:#1d4ed8;
-}
-
-.small{
-  font-size:14px;
-  color:#64748b;
-}
-
-@media(max-width:900px){
-  .grid{
-    grid-template-columns:1fr;
-  }
-}
 </style>
 </head>
-
 <body>
-<div class="wrap">
 
-<h1>소아 만성호흡부전 재택 모니터링 플랫폼</h1>
-<div class="subtitle">
-PM/PO Lead 관점의 전략적 정렬 문서  
-– 조직 간 실행 체계 통합을 위한 기준 정의 –
-</div>
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="subtitle" id="subtitle">Healthcare AI Strategist · Product Leader</div>
+<div class="big-title" id="bigTitle">Building Scalable AI in Healthcare.</div>
 
-<h2>1. Strategic Intent</h2>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
 
-<div class="block">
-본 프로젝트는 단일 AI 모델 개발이 아니다.<br><br>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas:document.getElementById("bg"),alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-이는 가정용 인공호흡기 의존 소아 환자의 
-<span class="highlight">의료 공백 구조를 시스템적으로 제거하는 운영 체계 전환</span>이다.<br><br>
+camera.position.z = 40; // 먼 거리에서 시작
 
-우리는 “알람을 제공하는 시스템”이 아니라,  
-<span class="highlight">위험 감지 → 판단 → 중재 → 검증까지 연결되는 24시간 연속 의사결정 체계</span>를 구축한다.
-</div>
+function textToPoints(text){
+  const canvas=document.createElement("canvas");
+  const ctx=canvas.getContext("2d");
+  canvas.width=1600;
+  canvas.height=400;
+  ctx.font="bold 240px Arial";
+  ctx.textAlign="center";
+  ctx.fillText(text,canvas.width/2,260);
+  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const pts=[];
+  for(let y=0;y<canvas.height;y+=4){
+    for(let x=0;x<canvas.width;x+=4){
+      const i=(y*canvas.width+x)*4;
+      if(data[i+3]>150){
+        pts.push({
+          x:(x-canvas.width/2)/140,
+          y:(canvas.height/2-y)/140,
+          z:(Math.random()-0.5)*4
+        });
+      }
+    }
+  }
+  return pts;
+}
 
----
+const pts=textToPoints("이사라");
+const count=pts.length;
 
-<h2>2. What Success Looks Like</h2>
+const geo=new THREE.BufferGeometry();
+const pos=new Float32Array(count*3);
 
-<div class="grid">
+for(let i=0;i<count;i++){
+  pos[i*3]=(Math.random()-0.5)*80;
+  pos[i*3+1]=(Math.random()-0.5)*80;
+  pos[i*3+2]=(Math.random()-0.5)*80;
+}
 
-<div class="block">
-<div class="metric">50% ↓</div>
-응급실 내원율 감소<br>
-<span class="small">재택 관리 실효성 검증</span>
-</div>
+geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
 
-<div class="block">
-<div class="metric">≥90%</div>
-민감도 확보<br>
-<span class="small">임상 적용 가능 수준 도달</span>
-</div>
+const mat=new THREE.PointsMaterial({
+  size:0.05,
+  color:0x0f172a,
+  transparent:true,
+  opacity:0.9
+});
 
-<div class="block">
-<div class="metric">&lt;5 sec</div>
-위험 감지 알림 SLA<br>
-<span class="small">Edge 기반 실시간 대응</span>
-</div>
+const particles=new THREE.Points(geo,mat);
+scene.add(particles);
 
-<div class="block">
-<div class="metric">SaMD</div>
-Class II 인허가 획득<br>
-<span class="small">상용화 전환 구조 완성</span>
-</div>
+let phase=0; // 0: form, 1: hold, 2: flythrough
 
-</div>
+function animate(){
+  requestAnimationFrame(animate);
 
----
+  const arr=geo.attributes.position.array;
 
-<h2>3. Operating Model</h2>
+  if(phase===0){
+    for(let i=0;i<count;i++){
+      arr[i*3]+= (pts[i].x-arr[i*3])*0.02;
+      arr[i*3+1]+= (pts[i].y-arr[i*3+1])*0.02;
+      arr[i*3+2]+= (pts[i].z-arr[i*3+2])*0.02;
+    }
+  }
 
-<div class="block">
-본 시스템은 Multi-Agent Orchestration 기반으로 작동한다.<br><br>
+  if(phase===2){
+    camera.position.z -= 0.3; // 카메라가 이름을 통과
+  }
 
-Monitoring Agent → Triage Agent → Intervention Agent → Feedback Agent<br><br>
+  geo.attributes.position.needsUpdate=true;
+  renderer.render(scene,camera);
+}
 
-이는 단순 예측이 아니라,  
-<span class="highlight">Self-Adaptive Closed-Loop Decision System</span>을 의미한다.
-</div>
+animate();
 
----
+/* 타이틀 시퀀스 타이밍 */
 
-<h2>4. Cross-Functional Alignment</h2>
+setTimeout(()=>{
+  document.getElementById("subtitle").style.opacity=1;
+},4000);
 
-<div class="grid">
+setTimeout(()=>{
+  phase=1;
+},5000);
 
-<div class="card">
-<strong>Clinical</strong><br>
-위험 정의, Triage 기준 수립, 실증 설계<br>
-<span class="small">책임: 임상적 타당성 확보</span>
-</div>
+setTimeout(()=>{
+  phase=2;
+  document.getElementById("bigTitle").style.opacity=1;
+},7000);
 
-<div class="card">
-<strong>AI Engineering</strong><br>
-Rule + ML 앙상블, Guardrail 설계<br>
-<span class="small">책임: 신뢰 가능한 판단 체계 구현</span>
-</div>
-
-<div class="card">
-<strong>Data</strong><br>
-다기관 데이터 정제, 지속 학습 파이프라인 구축<br>
-<span class="small">책임: 재현성과 확장성 확보</span>
-</div>
-
-<div class="card">
-<strong>Platform</strong><br>
-Edge-Cloud Hybrid 구조, 고가용성 인프라<br>
-<span class="small">책임: 실시간 대응 보장</span>
-</div>
-
-<div class="card">
-<strong>QA / RA</strong><br>
-SaMD 전략, 리스크 매트릭스, GMP 대응<br>
-<span class="small">책임: 상용화 준비</span>
-</div>
-
-<div class="card">
-<strong>Business</strong><br>
-수가 전략, SaaS 모델 설계, 확장 질환 기획<br>
-<span class="small">책임: 플랫폼 사업화</span>
-</div>
-
-</div>
-
----
-
-<h2>5. Leadership Principle</h2>
-
-<div class="block">
-1. AI는 의료진을 대체하지 않는다.  
-2. 보호자 과의존을 구조적으로 방지한다.  
-3. False Alarm 최소화가 핵심 품질 지표다.  
-4. 모든 설계는 상용화를 전제로 한다.  
-5. 데이터·임상·플랫폼은 단일 운영 체계로 움직인다.  
-<br><br>
-<span class="highlight">
-이 프로젝트는 기능 개발이 아니라,  
-소아 재택 의료 운영 모델을 재정의하는 전략 사업이다.
-</span>
-</div>
-
-</div>
+</script>
 </body>
 </html>
