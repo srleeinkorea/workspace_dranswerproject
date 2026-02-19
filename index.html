@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dr.Answer 3.0 | IR Deck</title>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+/>
+
+<style>
+:root{
+  --primary:#3b82f6;
+  --accent:#7c3aed;
+  --text-main:#0f172a;
+  --text-sub:#475569;
+  --glass:rgba(255,255,255,0.6);
+  --divider:rgba(15,23,42,0.08);
+}
+
+/* ===== Base ===== */
+
+*{
+  box-sizing:border-box;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-0.02em;
+}
+
+body{
+  margin:0;
+  font-family:Pretendard,sans-serif;
+  background:
+    radial-gradient(1000px 600px at 80% 0%, rgba(124,58,237,.15), transparent),
+    radial-gradient(800px 500px at 0% 20%, rgba(59,130,246,.15), transparent),
+    linear-gradient(180deg,#f8fafc 0%, #eef2ff 100%);
+  color:var(--text-main);
+  overflow-x:hidden;
+}
+
+/* 부드러운 배경 움직임 */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at 30% 30%, rgba(59,130,246,.15), transparent 60%);
+  animation:floatBg 12s ease-in-out infinite alternate;
+  z-index:-1;
+}
+
+@keyframes floatBg{
+  from{transform:translateY(-20px);}
+  to{transform:translateY(20px);}
+}
+
+.container{
+  max-width:1280px;
+  margin:0 auto;
+  padding:120px 40px;
+}
+
+/* ===== Section animation ===== */
+
+.section{
+  margin-bottom:140px;
+  opacity:0;
+  transform:translateY(30px);
+  animation:fadeUp 1s ease forwards;
+}
+
+.section:nth-child(1){animation-delay:.2s;}
+.section:nth-child(2){animation-delay:.4s;}
+.section:nth-child(3){animation-delay:.6s;}
+.section:nth-child(4){animation-delay:.8s;}
+
+@keyframes fadeUp{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.section-title{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:60px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--divider);
+}
+
+/* ===== HERO ===== */
+
+.hero{
+  text-align:center;
+  margin-bottom:160px;
+}
+
+.hero h1{
+  font-size:52px;
+  font-weight:800;
+  line-height:1.15;
+  margin-bottom:32px;
+  background:linear-gradient(90deg,#0f172a,#334155);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+  font-size:20px;
+  color:var(--text-sub);
+  line-height:1.7;
+}
+
+/* ===== Glass block effect ===== */
+
+.summary,
+.tech,
+.validation,
+.roadmap{
+  backdrop-filter:blur(14px);
+  background:var(--glass);
+  border-radius:20px;
+  padding:50px;
+  box-shadow:0 10px 40px rgba(0,0,0,.05);
+  transition:.4s;
+}
+
+.summary:hover,
+.tech:hover,
+.validation:hover,
+.roadmap:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 60px rgba(0,0,0,.08);
+}
+
+/* ===== Grid Layouts ===== */
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:40px;
+}
+
+.summary h4{
+  font-size:13px;
+  letter-spacing:.15em;
+  color:var(--primary);
+  margin-bottom:14px;
+}
+
+.summary p{
+  font-size:18px;
+  line-height:1.6;
+  color:var(--text-sub);
+}
+
+.tech{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:40px;
+}
+
+.tech h5{
+  font-size:18px;
+  margin-bottom:12px;
+}
+
+.tech p{
+  font-size:15px;
+  color:var(--text-sub);
+  line-height:1.6;
+}
+
+.validation{
+  display:flex;
+  justify-content:space-between;
+  font-size:16px;
+  color:var(--text-sub);
+}
+
+.validation span{
+  transition:.3s;
+}
+
+.validation span:hover{
+  color:var(--primary);
+}
+
+.roadmap{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:40px;
+}
+
+.year{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.phase{
+  font-size:16px;
+  color:var(--text-sub);
+}
+
+/* 현재 단계 강조 */
+
+.roadmap div:nth-child(2) .year{
+  color:var(--accent);
+}
+
+/* ===== Responsive ===== */
+
+@media(max-width:1024px){
+  .summary,
+  .tech,
+  .roadmap{
+    grid-template-columns:1fr;
+  }
+
+  .hero h1{
+    font-size:36px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="hero section">
+    <h1>소아 만성호흡부전 능동형 예후관리 플랫폼</h1>
+    <p>
+      EMR 연계 TRI-Agentic AI 기반<br>
+      24시간 재택 의료 안전망 구현
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Market Context</div>
+    <div class="summary">
+      <div>
+        <h4>TARGET</h4>
+        <p>가정용 인공호흡기 의존 중증 소아 환자 및 보호자</p>
+      </div>
+      <div>
+        <h4>PROBLEM</h4>
+        <p>퇴원 이후 관리 공백과 보호자 번아웃, 불필요한 응급 내원</p>
+      </div>
+      <div>
+        <h4>SOLUTION</h4>
+        <p>데이터 통합 기반 능동형 예방 관리 체계</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">TRI-Agentic AI Architecture</div>
+    <div class="tech">
+      <div>
+        <h5>Monitoring</h5>
+        <p>실시간 파라미터 및 알람 감시</p>
+      </div>
+      <div>
+        <h5>Triage</h5>
+        <p>PaedCTAS 기반 위험도 분류</p>
+      </div>
+      <div>
+        <h5>Clinical Q&A</h5>
+        <p>EMR 문맥 기반 맞춤형 상담</p>
+      </div>
+      <div>
+        <h5>Reporting</h5>
+        <p>의료진 의사결정 지원 리포트</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Multicenter Validation</div>
+    <div class="validation">
+      <span>신촌세브란스병원</span>
+      <span>삼성서울병원</span>
+      <span>서울아산병원</span>
+      <span>서울대병원</span>
+      <span>전남대병원</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Roadmap</div>
+    <div class="roadmap">
+      <div>
+        <div class="year">2025</div>
+        <div class="phase">Infrastructure Setup</div>
+      </div>
+      <div>
+        <div class="year">2026</div>
+        <div class="phase">Model Development</div>
+      </div>
+      <div>
+        <div class="year">2027</div>
+        <div class="phase">Clinical Validation</div>
+      </div>
+      <div>
+        <div class="year">2028</div>
+        <div class="phase">Scale-up</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
