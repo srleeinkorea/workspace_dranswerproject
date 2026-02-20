@@ -1,166 +1,974 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이사라 | Title Sequence</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
-<style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>소아 만성호흡부전 재택 모니터링 | Agentic AI 서비스 소개</title>
+  <style>
+    :root{
+      /* ✅ CI 컬러가 없으므로 “의료기관/심사” 톤의 기본 팔레트로 설정 */
+      --ci1:#0B4DA2; /* deep clinical blue */
+      --ci2:#00A3A1; /* medical teal */
+      --ci3:#6D28D9; /* accent */
 
-body{
-  margin:0;
-  background:#ffffff;
-  font-family:'Inter',sans-serif;
-  overflow:hidden;
-  color:#0f172a;
-}
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#0b1220;
+      --muted:#556070;
+      --line:rgba(11,18,32,.10);
+      --shadow:0 10px 26px rgba(11,18,32,.08);
 
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-}
+      --navy:#0f2a4a;
+      --blue:var(--ci1);
+      --teal:var(--ci2);
+      --purple:var(--ci3);
 
-.overlay{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.1) 100%);
-}
+      --ok-bg:#e8f7ee;   --ok-fg:#166534;
+      --warn-bg:#fff3d6; --warn-fg:#92400e;
+      --bad-bg:#ffe4e6;  --bad-fg:#991b1b;
 
-.subtitle{
-  position:absolute;
-  top:60%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-weight:300;
-  font-size:20px;
-  color:#475569;
-  opacity:0;
-  transition:2s ease;
-}
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
 
-.big-title{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:64px;
-  font-weight:900;
-  text-align:center;
-  opacity:0;
-  transition:2s ease;
-}
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(980px 520px at 10% 0%, rgba(11,77,162,.10), transparent 62%),
+        radial-gradient(980px 520px at 90% 8%, rgba(0,163,161,.08), transparent 60%),
+        radial-gradient(980px 520px at 30% 100%, rgba(109,40,217,.06), transparent 60%),
+        var(--bg);
+    }
+    a{color:var(--blue); text-decoration:none;}
+    .wrap{max-width:1140px; margin:0 auto; padding:28px 18px 76px;}
+    .top{
+      display:flex;
+      align-items:stretch;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .left{flex:1 1 560px; min-width:320px;}
+    .hero-visual{flex:1 1 360px; min-width:320px; display:flex; justify-content:flex-end; align-items:flex-start;}
+    @media (max-width: 980px){
+      .hero-visual{justify-content:stretch;}
+    }
 
-</style>
+    .brand{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background:linear-gradient(135deg, rgba(11,77,162,.20), rgba(0,163,161,.18));
+      border:1px solid var(--line);
+      box-shadow:0 10px 22px rgba(11,18,32,.08);
+    }
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg,var(--blue),var(--teal));}
+
+    h1{
+      margin:10px 0 0;
+      font-size:26px;
+      line-height:1.15;
+      letter-spacing:-.35px;
+      color:var(--navy);
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+      max-width:920px;
+    }
+
+    .chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      justify-content:flex-start;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 11px; border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      box-shadow:0 8px 18px rgba(11,18,32,.06);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .chip b{color:var(--text); font-weight:900;}
+
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .head{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,42,74,.06), rgba(255,255,255,0));
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+    }
+    .head h2{margin:0; font-size:14px; font-weight:900; letter-spacing:-.2px; color:var(--navy);}
+    .head p{margin:6px 0 0; font-size:12.5px; color:var(--muted); line-height:1.55; max-width:900px;}
+    .body{padding:16px;}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+    @media (max-width: 980px){
+      .grid2{grid-template-columns:1fr;}
+      .grid3{grid-template-columns:1fr;}
+    }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      background:linear-gradient(180deg, rgba(11,18,32,.02), rgba(255,255,255,1));
+    }
+    .box h3{margin:0; font-size:13px; color:var(--navy); font-weight:900;}
+    .box p{margin:7px 0 0; font-size:12.8px; color:var(--muted); line-height:1.65;}
+    .list{margin:8px 0 0 18px; color:var(--muted); font-size:13px; line-height:1.75;}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(11,18,32,.10);
+      font-size:12px; font-weight:900;
+      white-space:nowrap;
+    }
+    .pill .mini{width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.9;}
+    .ok{background:var(--ok-bg); color:var(--ok-fg);}
+    .warn{background:var(--warn-bg); color:var(--warn-fg);}
+    .bad{background:var(--bad-bg); color:var(--bad-fg);}
+
+    table{width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff;}
+    th, td{padding:11px 12px; font-size:13px; border-bottom:1px solid var(--line); vertical-align:top; text-align:left;}
+    th{background:#eef2f7; color:#334155; font-weight:900; font-size:12.5px;}
+    tr:last-child td{border-bottom:none;}
+    .muted{color:var(--muted);}
+    .mono{font-family:var(--mono); font-size:12px;}
+
+    .kbd{
+      display:inline-block; padding:2px 7px; border-radius:8px;
+      border:1px solid rgba(11,18,32,.12);
+      background:#f8fafc;
+      font-family:var(--mono);
+      font-size:12px;
+      color:#0b1220;
+      white-space:nowrap;
+    }
+
+    /* Hero visual card */
+    .card-mini{
+      width:100%;
+      max-width:420px;
+      background:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .mini-head{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,42,74,.06), rgba(255,255,255,0));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .mini-title{
+      font-weight:900;
+      color:var(--navy);
+      font-size:13px;
+      letter-spacing:-.1px;
+      margin:0;
+    }
+    .mini-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .mini-body{padding:12px 14px;}
+
+    /* Diagrams */
+    .diagram{
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(255,255,255,.85);
+      overflow:hidden;
+      box-shadow:0 10px 22px rgba(11,18,32,.05);
+    }
+    .diagram .cap{
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(11,77,162,.07), rgba(255,255,255,0));
+      color:var(--navy);
+      font-weight:900;
+      font-size:12.5px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .diagram .cap span{color:var(--muted); font-weight:800; font-size:12px;}
+    .diagram .svg-wrap{padding:10px 12px;}
+
+    /* 3-stage label bar */
+    .stagebar{
+      display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px;
+    }
+
+    /* CTA */
+    .cta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--navy);
+      font-weight:900;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .btn.primary{
+      border-color:rgba(11,77,162,.25);
+      background:linear-gradient(180deg, rgba(11,77,162,.12), rgba(255,255,255,1));
+    }
+
+    .foot{
+      padding:14px 16px;
+      border-top:1px solid var(--line);
+      background:rgba(11,18,32,.02);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.65;
+    }
+    .foot b{color:var(--text);}
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
 
-<canvas id="bg"></canvas>
-<div class="overlay"></div>
-<div class="subtitle" id="subtitle">Healthcare AI Strategist · Product Leader</div>
-<div class="big-title" id="bigTitle">Building Scalable AI in Healthcare.</div>
+    <!-- HERO -->
+    <div class="top">
+      <div class="left">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <span class="kicker"><span class="dot"></span> Agentic AI · Pediatric Home Ventilation Monitoring</span>
+          <span class="kicker">주관기관: <b style="color:var(--text)">서울아산병원</b></span>
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
+        <h1>소아 만성호흡부전 환자<br/>재택 모니터링 및 응급 대응 지원 서비스</h1>
+        <p class="subtitle">
+          의료 공백 시간(야간·휴일 포함)에도 실시간 감시 → 위험 징후 조기 감지 → 불필요한 응급실 내원 감소 →
+          생명 위협 상황의 신속 대응을 목표로 하는 <b>24/7 Multi-Agent(Agentic AI) 기반 재택 모니터링 시스템</b>입니다.
+        </p>
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({canvas:document.getElementById("bg"),alpha:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
+        <div class="chips">
+          <div class="chip"><span class="dot"></span> 제공 형태 <b>SaaS / On-prem</b></div>
+          <div class="chip"><span class="dot"></span> 인허가 <b>SaMD Class II(DS)</b></div>
+          <div class="chip"><span class="dot"></span> 운영 <b>Hybrid Edge-Cloud</b></div>
+        </div>
+      </div>
 
-camera.position.z = 40; // 먼 거리에서 시작
+      <!-- Hero Concept Illustration -->
+      <div class="hero-visual">
+        <div class="card-mini">
+          <div class="mini-head">
+            <div>
+              <p class="mini-title">Concept Illustration</p>
+              <p class="mini-sub">Home · Ventilation · Monitoring · Safety · AI</p>
+            </div>
+            <span class="kicker"><span class="dot"></span> Vector (SVG)</span>
+          </div>
+          <div class="mini-body">
+            <!-- CI-toned SVG -->
+            <svg viewBox="0 0 560 240" width="100%" height="auto" role="img" aria-label="Home ventilation monitoring concept illustration">
+              <defs>
+                <linearGradient id="ciBg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="var(--ci1)" stop-opacity="0.16"/>
+                  <stop offset="1" stop-color="var(--ci2)" stop-opacity="0.14"/>
+                </linearGradient>
+                <linearGradient id="ciStroke" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="var(--ci1)"/>
+                  <stop offset="1" stop-color="var(--ci2)"/>
+                </linearGradient>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0b1220" flood-opacity="0.14"/>
+                </filter>
+              </defs>
 
-function textToPoints(text){
-  const canvas=document.createElement("canvas");
-  const ctx=canvas.getContext("2d");
-  canvas.width=1600;
-  canvas.height=400;
-  ctx.font="bold 240px Arial";
-  ctx.textAlign="center";
-  ctx.fillText(text,canvas.width/2,260);
-  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  const pts=[];
-  for(let y=0;y<canvas.height;y+=4){
-    for(let x=0;x<canvas.width;x+=4){
-      const i=(y*canvas.width+x)*4;
-      if(data[i+3]>150){
-        pts.push({
-          x:(x-canvas.width/2)/140,
-          y:(canvas.height/2-y)/140,
-          z:(Math.random()-0.5)*4
-        });
-      }
-    }
-  }
-  return pts;
-}
+              <rect x="10" y="10" width="540" height="220" rx="18" fill="url(#ciBg)" stroke="rgba(11,18,32,.10)"/>
 
-const pts=textToPoints("이사라");
-const count=pts.length;
+              <g filter="url(#softShadow)">
+                <path d="M110 120 L190 60 L270 120 V200 H110 Z" fill="#ffffff" stroke="rgba(11,18,32,.12)" stroke-width="2"/>
+                <path d="M170 200 V150 H210 V200" fill="#f3f6fb" stroke="rgba(11,18,32,.12)" stroke-width="2"/>
+                <path d="M150 98 H230" stroke="rgba(11,18,32,.12)" stroke-width="6" stroke-linecap="round"/>
+              </g>
 
-const geo=new THREE.BufferGeometry();
-const pos=new Float32Array(count*3);
+              <g filter="url(#softShadow)">
+                <rect x="320" y="92" width="160" height="120" rx="16" fill="#ffffff" stroke="rgba(11,18,32,.12)" stroke-width="2"/>
+                <rect x="336" y="108" width="92" height="56" rx="10" fill="#eef2f7" stroke="rgba(11,18,32,.10)"/>
+                <path d="M348 144 C360 126, 378 164, 392 140 C404 120, 422 164, 438 138"
+                      fill="none" stroke="url(#ciStroke)" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="452" cy="146" r="10" fill="#f3f6fb" stroke="rgba(11,18,32,.12)"/>
+                <rect x="336" y="172" width="124" height="26" rx="10" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="346" y="190" font-size="12" font-family="system-ui" fill="#556070">Monitoring</text>
+              </g>
 
-for(let i=0;i<count;i++){
-  pos[i*3]=(Math.random()-0.5)*80;
-  pos[i*3+1]=(Math.random()-0.5)*80;
-  pos[i*3+2]=(Math.random()-0.5)*80;
-}
+              <path d="M270 160 C300 160, 304 160, 320 160"
+                    fill="none" stroke="rgba(11,18,32,.22)" stroke-width="6" stroke-linecap="round"/>
 
-geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+              <g>
+                <circle cx="430" cy="66" r="10" fill="var(--ci1)" opacity=".16"/>
+                <circle cx="458" cy="58" r="6" fill="var(--ci2)" opacity=".16"/>
+                <circle cx="484" cy="74" r="8" fill="var(--ci3)" opacity=".12"/>
+                <path d="M410 64 C430 40, 468 44, 496 60"
+                      fill="none" stroke="var(--ci1)" stroke-opacity=".42" stroke-width="3" stroke-linecap="round"/>
+              </g>
 
-const mat=new THREE.PointsMaterial({
-  size:0.05,
-  color:0x0f172a,
-  transparent:true,
-  opacity:0.9
-});
+              <g filter="url(#softShadow)">
+                <path d="M420 18 L466 34 L466 74 C466 98, 444 116, 420 124 C396 116, 374 98, 374 74 V34 Z"
+                      fill="#ffffff" stroke="rgba(11,18,32,.12)" stroke-width="2"/>
+                <path d="M392 70 L412 88 L448 50"
+                      fill="none" stroke="url(#ciStroke)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
 
-const particles=new THREE.Points(geo,mat);
-scene.add(particles);
+              <text x="120" y="34" font-size="12" font-family="system-ui" fill="#0f2a4a" font-weight="700">Home</text>
+              <text x="330" y="34" font-size="12" font-family="system-ui" fill="#0f2a4a" font-weight="700">AI Monitoring</text>
+              <text x="392" y="146" font-size="11" font-family="system-ui" fill="#556070">Device</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
 
-let phase=0; // 0: form, 1: hold, 2: flythrough
+    <!-- Problem -->
+    <section class="section" id="problem">
+      <div class="head">
+        <div>
+          <h2>미충족 의료수요 (Unmet Needs)</h2>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:160px;">문제 영역</th>
+              <th>구체적 내용</th>
+              <th style="width:140px;">심각도</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>의료 접근성</b></td>
+              <td class="muted">소아 응급실 수도권 편중 · 1·2차 병원 진료 거부 사례 · 구급차 이용 시 고비용</td>
+              <td><span class="pill bad"><span class="mini"></span>매우 심각</span></td>
+            </tr>
+            <tr>
+              <td><b>모니터링 공백</b></td>
+              <td class="muted">월 1회 방문 중심 재택의료 · 야간·휴일 대응 불가 · 보호자 판단 의존</td>
+            </tr>
+            <tr>
+              <td><b>기기 한계</b></td>
+              <td class="muted">기계적 오류 중심 감지 · 저산소증/환기저하 조기 감지 한계 · 통합 위험도 평가 부재</td>
+              <td><span class="pill bad"><span class="mini"></span>매우 심각</span></td>
+            </tr>
+            <tr>
+              <td><b>보호자 부담</b></td>
+              <td class="muted">24시간 상시 돌봄 · 수면/개인시간 부족 · 불안 및 의사결정 부담</td>
+              <td><span class="pill bad"><span class="mini"></span>매우 심각</span></td>
+            </tr>
+          </tbody>
+        </table>
 
-function animate(){
-  requestAnimationFrame(animate);
+        <div style="margin-top:12px" class="grid2">
+          <div class="box">
+            <h3>임상 근거(요약)</h3>
+            <ul class="list">
+              <li>재택의료 시범사업 결과: <b>응급실·입원 50% 감소</b> (세브란스 데이터)</li>
+              <li>중증 소아 환자 연평균 증가율: <b>2.71% ↑</b> (2011–2021)</li>
+              <li>가정용 인공호흡기 처방: <b>지속적 상승 추세</b></li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>결론</h3>
+            <p>
+              “수요 증가”와 “실시간 대응 체계 부재” 사이의 격차가 확대되고 있습니다.<br/>
+              본 서비스는 재택 환경에서 <b>실시간 감시–분류–중재–피드백</b>을 연결하여 의료 공백을 구조적으로 보완합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  const arr=geo.attributes.position.array;
+    <!-- Personas -->
+    <section class="section" id="persona">
+      <div class="head">
+        <div>
+          <h2>사용자(페르소나)와 기대 효과</h2>
+          <p>각 사용자군이 “무엇을 보고, 어떤 결정을 내리는지” 기준으로 UX를 설계합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="grid3">
 
-  if(phase===0){
-    for(let i=0;i<count;i++){
-      arr[i*3]+= (pts[i].x-arr[i*3])*0.02;
-      arr[i*3+1]+= (pts[i].y-arr[i*3+1])*0.02;
-      arr[i*3+2]+= (pts[i].z-arr[i*3+2])*0.02;
-    }
-  }
+          <!-- Caregiver -->
+          <div class="box">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <svg viewBox="0 0 64 64" width="42" height="42" role="img" aria-label="Caregiver icon">
+                <defs>
+                  <linearGradient id="p1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="var(--ci1)" stop-opacity=".20"/>
+                    <stop offset="1" stop-color="var(--ci2)" stop-opacity=".16"/>
+                  </linearGradient>
+                </defs>
+                <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#p1)" stroke="rgba(11,18,32,.10)"/>
+                <circle cx="26" cy="28" r="8" fill="#fff" stroke="rgba(11,18,32,.14)"/>
+                <circle cx="42" cy="30" r="6.5" fill="#fff" stroke="rgba(11,18,32,.14)"/>
+                <path d="M16 50 C18 42, 34 42, 36 50" fill="none" stroke="rgba(11,18,32,.18)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M35 50 C36 45, 48 45, 50 50" fill="none" stroke="rgba(11,18,32,.18)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M43 20 C46 18, 50 20, 48 24" fill="none" stroke="var(--ci1)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M40 22 C42 26, 36 28, 36 24 C36 21, 39 20, 40 22 Z" fill="var(--ci2)" opacity=".35"/>
+              </svg>
+              <div>
+                <h3 style="margin:0; font-size:13px; color:var(--navy); font-weight:900;">보호자</h3>
+                <p style="margin:6px 0 0; font-size:12.8px; color:var(--muted); line-height:1.6;">
+                  불안 감소 · 행동 가이드 제공 · “언제 병원에 연락해야 하는지” 명확화
+                </p>
+              </div>
+            </div>
+            <ul class="list">
+              <li>Level별 조치(흡인/체위/산소/내원) 가이드</li>
+              <li>센서 미착용·회로 이탈 즉시 알림</li>
+              <li>Q&amp;A: 출처 명시형 안내(환각 최소화)</li>
+            </ul>
+          </div>
 
-  if(phase===2){
-    camera.position.z -= 0.3; // 카메라가 이름을 통과
-  }
+          <!-- Home care team -->
+          <div class="box">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <svg viewBox="0 0 64 64" width="42" height="42" role="img" aria-label="Home care team icon">
+                <defs>
+                  <linearGradient id="p2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="var(--ci2)" stop-opacity=".18"/>
+                    <stop offset="1" stop-color="var(--ci3)" stop-opacity=".12"/>
+                  </linearGradient>
+                </defs>
+                <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#p2)" stroke="rgba(11,18,32,.10)"/>
+                <path d="M18 30 L32 18 L46 30 V50 H18 Z" fill="#fff" stroke="rgba(11,18,32,.14)" stroke-width="2"/>
+                <path d="M28 50 V38 H36 V50" fill="#f3f6fb" stroke="rgba(11,18,32,.14)" stroke-width="2"/>
+                <circle cx="48" cy="22" r="7" fill="#fff" stroke="rgba(11,18,32,.14)"/>
+                <path d="M48 18 V26 M44 22 H52" stroke="var(--ci1)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <h3 style="margin:0; font-size:13px; color:var(--navy); font-weight:900;">재택의료팀</h3>
+                <p style="margin:6px 0 0; font-size:12.8px; color:var(--muted); line-height:1.6;">
+                  우선순위 기반 케이스 관리 · 알람 피로 감소 · 개입 타이밍 최적화
+                </p>
+              </div>
+            </div>
+            <ul class="list">
+              <li>Triage Level 1–3 자동 분류 + 에스컬레이션</li>
+              <li>반복 알람(회로 분리/TV 저하) 패턴 분석</li>
+              <li>24–72h 피드백으로 중재 효과 추적</li>
+            </ul>
+          </div>
 
-  geo.attributes.position.needsUpdate=true;
-  renderer.render(scene,camera);
-}
+          <!-- Clinician -->
+          <div class="box">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <svg viewBox="0 0 64 64" width="42" height="42" role="img" aria-label="Clinician icon">
+                <defs>
+                  <linearGradient id="p3" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="var(--ci1)" stop-opacity=".18"/>
+                    <stop offset="1" stop-color="var(--ci3)" stop-opacity=".12"/>
+                  </linearGradient>
+                </defs>
+                <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#p3)" stroke="rgba(11,18,32,.10)"/>
+                <circle cx="30" cy="26" r="9" fill="#fff" stroke="rgba(11,18,32,.14)"/>
+                <path d="M18 52 C20 42, 40 42, 42 52" fill="none" stroke="rgba(11,18,32,.18)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M40 34 L54 34" stroke="rgba(11,18,32,.18)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M47 27 L47 41" stroke="var(--ci2)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="47" cy="34" r="9" fill="none" stroke="rgba(11,18,32,.14)" stroke-width="2"/>
+              </svg>
+              <div>
+                <h3 style="margin:0; font-size:13px; color:var(--navy); font-weight:900;">의료진</h3>
+                <p style="margin:6px 0 0; font-size:12.8px; color:var(--muted); line-height:1.6;">
+                  임상 근거 기반 의사결정 지원 · 책임성(로그/가드레일) 확보
+                </p>
+              </div>
+            </div>
+            <ul class="list">
+              <li>위험점수/근거/추세를 한 화면에서 확인</li>
+              <li>Level 3 자동 호출(옵트아웃 불가)로 HITL 강제</li>
+              <li>SaMD 대응: 감사로그/RBAC/품질문서 연계</li>
+            </ul>
+          </div>
 
-animate();
+        </div>
+      </div>
+    </section>
 
-/* 타이틀 시퀀스 타이밍 */
+    <!-- Solution + 3-stage labels + Multi-agent diagram -->
+    <section class="section" id="solution">
+      <div class="head">
+        <div>
+          <h2>Agentic AI 솔루션 구조</h2>
+          <p>Rule + ML + RAG + Guardrail을 결합한 <b>폐쇄루프(Closed-loop)</b> 운영 구조입니다.</p>
+        </div>
+      </div>
 
-setTimeout(()=>{
-  document.getElementById("subtitle").style.opacity=1;
-},4000);
+      <div class="body">
 
-setTimeout(()=>{
-  phase=1;
-},5000);
+        <!-- 심사위원 관점 3단계 라벨 -->
+        <div class="stagebar">
+          <span class="pill ok"><span class="mini"></span>임상(Clinical): CTAS 기반 Triage · Human-in-the-loop</span>
+          <span class="pill warn"><span class="mini"></span>기술(Tech): Rule+LSTM · RAG · Guardrail · Edge-Cloud</span>
+          <span class="pill ok"><span class="mini"></span>인허가(Regulatory): SaMD II(DS) · GMP · Audit/RBAC</span>
+        </div>
 
-setTimeout(()=>{
-  phase=2;
-  document.getElementById("bigTitle").style.opacity=1;
-},7000);
+        <div class="diagram">
+          <div class="cap">Diagram ① Multi-Agent Closed-loop <span>A0–A5 Orchestration</span></div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 980 220" width="100%" height="auto" role="img" aria-label="Multi-agent closed-loop diagram">
+              <defs>
+                <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="var(--ci1)" stop-opacity="0.12"/>
+                  <stop offset="1" stop-color="var(--ci2)" stop-opacity="0.10"/>
+                </linearGradient>
+                <linearGradient id="mg2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="var(--ci1)"/>
+                  <stop offset="1" stop-color="var(--ci2)"/>
+                </linearGradient>
+              </defs>
 
-</script>
+              <rect x="10" y="10" width="960" height="200" rx="18" fill="url(#mg)" stroke="rgba(11,18,32,.10)"/>
+
+              <!-- 3-stage labels INSIDE SVG -->
+              <g font-family="system-ui" font-size="12">
+                <rect x="40" y="22" width="260" height="26" rx="10" fill="rgba(11,77,162,.10)" stroke="rgba(11,18,32,.10)"/>
+                <text x="52" y="40" fill="#0f2a4a" font-weight="700">임상</text>
+                <text x="92" y="40" fill="#556070">CTAS 기반 분류 · HITL</text>
+
+                <rect x="320" y="22" width="300" height="26" rx="10" fill="rgba(0,163,161,.10)" stroke="rgba(11,18,32,.10)"/>
+                <text x="332" y="40" fill="#0f2a4a" font-weight="700">기술</text>
+                <text x="372" y="40" fill="#556070">Rule+LSTM · RAG · Guardrail</text>
+
+                <rect x="640" y="22" width="300" height="26" rx="10" fill="rgba(109,40,217,.08)" stroke="rgba(11,18,32,.10)"/>
+                <text x="652" y="40" fill="#0f2a4a" font-weight="700">인허가</text>
+                <text x="702" y="40" fill="#556070">SaMD II · GMP · Audit/RBAC</text>
+              </g>
+
+              <!-- Nodes -->
+              <g font-family="system-ui" font-size="12" fill="#0f2a4a">
+                <g>
+                  <rect x="40" y="78" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="60" y="108" font-weight="700">A0 Orchestrator</text>
+                  <text x="60" y="128" fill="#556070">event · state · SLA</text>
+                </g>
+
+                <g>
+                  <rect x="210" y="58" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="230" y="88" font-weight="700">A1 Monitoring</text>
+                  <text x="230" y="108" fill="#556070">Rule + LSTM</text>
+                </g>
+
+                <g>
+                  <rect x="380" y="58" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="400" y="88" font-weight="700">A2 Triage</text>
+                  <text x="400" y="108" fill="#556070">L1/L2/L3</text>
+                </g>
+
+                <g>
+                  <rect x="550" y="58" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="570" y="88" font-weight="700">A3 Q&amp;A</text>
+                  <text x="570" y="108" fill="#556070">RAG · cited</text>
+                </g>
+
+                <g>
+                  <rect x="720" y="58" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="740" y="88" font-weight="700">A4 Intervention</text>
+                  <text x="740" y="108" fill="#556070">step guide</text>
+                </g>
+
+                <g>
+                  <rect x="550" y="138" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="570" y="168" font-weight="700">A5 Feedback</text>
+                  <text x="570" y="188" fill="#556070">24–72h loop</text>
+                </g>
+
+                <g>
+                  <rect x="720" y="138" width="140" height="64" rx="14" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                  <text x="740" y="168" font-weight="700">Guardrail</text>
+                  <text x="740" y="188" fill="#556070">input→RAG→output</text>
+                </g>
+              </g>
+
+              <!-- arrows -->
+              <g stroke="url(#mg2)" stroke-width="3" fill="none" stroke-linecap="round">
+                <path d="M180 110 H210"/>
+                <path d="M350 90 H380"/>
+                <path d="M520 90 H550"/>
+                <path d="M690 90 H720"/>
+                <path d="M790 122 V138"/>
+                <path d="M550 170 C440 210, 220 210, 120 150" />
+              </g>
+
+              <g font-family="system-ui" font-size="12" fill="#556070">
+                <text x="240" y="40" opacity=".0">.</text>
+                <text x="240" y="52">Signals</text>
+                <text x="470" y="52">Risk Level</text>
+                <text x="640" y="52">Guidance</text>
+                <text x="420" y="208">Closed-loop update</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="grid3">
+          <div class="box">
+            <h3>A1 Monitoring</h3>
+            <p>
+              <b>입력(초단위)</b>: SpO₂, HR, TV, PIP, MV, FiO₂, PEEP, RR<br/>
+              <b>출력</b>: 이상 이벤트 + 위험점수(0–100)<br/>
+              <b>목표</b>: False alarm &lt; <b>5회/일</b>
+            </p>
+          </div>
+          <div class="box">
+            <h3>A2 Triage</h3>
+            <p>
+              <b>3단계 분류</b>: Level 1(관찰) / Level 2(외래) / Level 3(즉시 ER + 자동 알림)<br/>
+              <b>기준</b>: 소아 CTAS 기반 재구성(프로토콜화)
+            </p>
+          </div>
+          <div class="box">
+            <h3>A4/A5</h3>
+            <p>
+              <b>중재</b>: 단계별 행동 가이드 자동 생성<br/>
+              <b>피드백</b>: 24–72h 추적, 위험점수 재조정, 전략 개선(Closed-loop)
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hybrid Edge–Cloud -->
+    <section class="section" id="edgecloud">
+      <div class="head">
+        <div>
+          <h2>Hybrid Edge–Cloud 아키텍처 (SLA 대응)</h2>
+          <p>Critical Event는 <b>Edge에서 즉시 분기</b>하고, Cloud에서 고정밀 분석을 병렬 수행합니다.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>SLA 5초 목표</span>
+          <span class="pill warn"><span class="mini"></span>Fail-safe</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="diagram">
+          <div class="cap">Diagram ② Hybrid Edge–Cloud <span>Low-latency + High-fidelity</span></div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 980 240" width="100%" height="auto" role="img" aria-label="Hybrid edge cloud diagram">
+              <defs>
+                <linearGradient id="ec" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="var(--ci1)" stop-opacity="0.10"/>
+                  <stop offset="1" stop-color="var(--ci2)" stop-opacity="0.08"/>
+                </linearGradient>
+                <linearGradient id="ec2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="var(--ci1)"/>
+                  <stop offset="1" stop-color="var(--ci2)"/>
+                </linearGradient>
+              </defs>
+
+              <rect x="10" y="10" width="960" height="220" rx="18" fill="url(#ec)" stroke="rgba(11,18,32,.10)"/>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="40" y="70" width="210" height="120" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="60" y="98" font-weight="700" fill="#0f2a4a">Home Signals</text>
+                <text x="60" y="120" fill="#556070">Ventilator + SpO₂ + HR</text>
+                <text x="60" y="142" fill="#556070">TV · MV · RR · PIP · …</text>
+                <rect x="60" y="154" width="160" height="22" rx="10" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="70" y="170" fill="#556070">stream / telemetry</text>
+              </g>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="300" y="52" width="240" height="156" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="320" y="82" font-weight="700" fill="#0f2a4a">Edge (Local)</text>
+                <text x="320" y="104" fill="#556070">ONNX lightweight model</text>
+                <text x="320" y="126" fill="#556070">Critical event branching</text>
+                <rect x="320" y="140" width="200" height="26" rx="12" fill="rgba(11,77,162,.10)" stroke="rgba(11,77,162,.22)"/>
+                <text x="332" y="158" fill="#0f2a4a" font-weight="700">SLA: alert &lt; 5s</text>
+                <rect x="320" y="174" width="200" height="22" rx="10" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="330" y="190" fill="#556070">SMS / Push (local)</text>
+              </g>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="600" y="52" width="340" height="156" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="620" y="82" font-weight="700" fill="#0f2a4a">Cloud (High-fidelity)</text>
+                <text x="620" y="104" fill="#556070">Rule + LSTM + RAG (cited)</text>
+                <text x="620" y="126" fill="#556070">Triage · Guidance · Logging</text>
+                <rect x="620" y="140" width="300" height="22" rx="10" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="630" y="156" fill="#556070">Case review + clinician workflow</text>
+                <rect x="620" y="170" width="300" height="22" rx="10" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="630" y="186" fill="#556070">Audit / RBAC / PHI controls</text>
+              </g>
+
+              <g stroke="url(#ec2)" stroke-width="3" fill="none" stroke-linecap="round">
+                <path d="M250 130 H300"/>
+                <path d="M540 130 H600"/>
+                <path d="M420 52 C520 18, 650 18, 770 52"/>
+              </g>
+
+              <g font-family="system-ui" font-size="12" fill="#556070">
+                <text x="356" y="34">fast path</text>
+                <text x="720" y="34">deep analysis</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multi-signal redundancy -->
+    <section class="section" id="redundancy">
+      <div class="head">
+        <div>
+          <h2>Single Point of Failure 대응: Multi-Signal Redundancy</h2>
+          <p>SpO₂ 단일 의존을 제거하고, <b>다중 신호 + Degraded Mode</b>로 안전성을 강화합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="diagram">
+          <div class="cap">Diagram ③ Multi-Signal Redundancy <span>SpO₂ failure → safe degraded operation</span></div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 980 240" width="100%" height="auto" role="img" aria-label="Multi-signal redundancy diagram">
+              <defs>
+                <linearGradient id="rd" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="var(--ci3)" stop-opacity="0.08"/>
+                  <stop offset="1" stop-color="var(--ci1)" stop-opacity="0.08"/>
+                </linearGradient>
+              </defs>
+
+              <rect x="10" y="10" width="960" height="220" rx="18" fill="url(#rd)" stroke="rgba(11,18,32,.10)"/>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="40" y="70" width="190" height="120" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="60" y="98" font-weight="700" fill="#0f2a4a">Primary</text>
+                <text x="60" y="122" fill="#556070">SpO₂ (pulse oximetry)</text>
+                <circle cx="190" cy="112" r="10" fill="#ffe4e6" stroke="rgba(153,27,27,.25)"/>
+                <path d="M184 106 L196 118 M196 106 L184 118" stroke="#991b1b" stroke-width="2" stroke-linecap="round"/>
+                <text x="60" y="150" fill="#556070">single point risk</text>
+              </g>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="270" y="40" width="420" height="180" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="290" y="68" font-weight="700" fill="#0f2a4a">Redundant Signals</text>
+
+                <rect x="290" y="86" width="180" height="28" rx="12" fill="rgba(11,77,162,.10)" stroke="rgba(11,77,162,.22)"/>
+                <text x="302" y="105" fill="#0f2a4a" font-weight="700">Ventilator patterns</text>
+
+                <rect x="290" y="122" width="180" height="28" rx="12" fill="rgba(0,163,161,.10)" stroke="rgba(0,163,161,.22)"/>
+                <text x="302" y="141" fill="#0f2a4a" font-weight="700">Breath sound (CNN)</text>
+
+                <rect x="290" y="158" width="180" height="28" rx="12" fill="rgba(109,40,217,.08)" stroke="rgba(109,40,217,.18)"/>
+                <text x="302" y="177" fill="#0f2a4a" font-weight="700">Video cyanosis (CV)</text>
+
+                <rect x="490" y="86" width="180" height="28" rx="12" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="502" y="105" fill="#556070">HR / RR / MV / TV</text>
+
+                <rect x="490" y="122" width="180" height="28" rx="12" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="502" y="141" fill="#556070">Auto-PEEP / DynR / DynC</text>
+
+                <rect x="490" y="158" width="180" height="28" rx="12" fill="#f8fafc" stroke="rgba(11,18,32,.10)"/>
+                <text x="502" y="177" fill="#556070">sensor wear detection</text>
+              </g>
+
+              <g font-family="system-ui" font-size="12">
+                <rect x="730" y="70" width="210" height="120" rx="16" fill="#fff" stroke="rgba(11,18,32,.12)"/>
+                <text x="750" y="98" font-weight="700" fill="#0f2a4a">Degraded Mode</text>
+                <text x="750" y="122" fill="#556070">safe triage with</text>
+                <text x="750" y="144" fill="#556070">re-attachment prompt</text>
+                <rect x="750" y="156" width="170" height="22" rx="10" fill="rgba(255,243,214,.8)" stroke="rgba(146,64,14,.22)"/>
+                <text x="760" y="172" fill="#92400e" font-weight="700">risk-aware alerts</text>
+              </g>
+
+              <g stroke="rgba(11,77,162,.65)" stroke-width="3" fill="none" stroke-linecap="round">
+                <path d="M230 130 H270"/>
+                <path d="M690 130 H730"/>
+              </g>
+
+              <g font-family="system-ui" font-size="12" fill="#556070">
+                <text x="56" y="206">Failure detected → shift to redundant signals</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI / Roadmap / Regulatory / Critical Issues (condensed but complete) -->
+    <section class="section" id="plan">
+      <div class="head">
+        <div>
+          <h2>데이터셋 구축 · 성능 목표 · 인허가 전략</h2>
+          <p>연구계획서/IR/기술백서 관점을 한 화면에서 연결(데이터→모델→임상효과→인허가)합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="grid3">
+          <div class="box">
+            <h3>데이터셋 구축</h3>
+            <ul class="list">
+              <li><b>2025(후향적)</b>: 60명 × 24개월 / 상담 5,760건 / KDB 100건</li>
+              <li><b>2026(전향적)</b>: 40명 × 6개월 / PRO 일 1건 / 의료진 피드백</li>
+              <li><b>2027–2028</b>: 다기관 실증 / 월간 Trajectory Fine-tuning</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>성능 목표(KPI)</h3>
+            <ul class="list">
+              <li>민감도: 2차 ≥80% → 3차 ≥90% → 4차 ≥90%</li>
+              <li>AUROC: 2차 ≥0.80 → 3차 ≥0.83 → 4차 ≥0.85</li>
+              <li>SUS: 2차 ≥75 → 3차 ≥80 → 4차 ≥85</li>
+              <li>임상효과: 4차 <b>응급실 50%↓</b></li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>인허가/상용화</h3>
+            <ul class="list">
+              <li><b>SaMD Class II(Decision Support)</b></li>
+              <li>2차: GMP 구축 + 품목허가 신청</li>
+              <li>3차: GMP 적합 + 품목인증</li>
+              <li>4차: SaaS/On-prem 상용화</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <b>설계 원칙</b>: 결측·품질 플래그, 원시 알람 로그(시각/지속/해결 여부), 개인 기준선 기반 추세 감지 등 “재현 가능”한 운영을 전제로 합니다.
+      </div>
+    </section>
+
+    <!-- Critical Issues -->
+    <section class="section" id="risk">
+      <div class="head">
+        <div>
+          <h2>Critical Issues & 전략적 대응</h2>
+          <p>리스크를 “명시”하고, 시스템 레벨에서 “완화 구조”로 설계합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="grid2">
+          <div class="box">
+            <h3><span class="pill bad"><span class="mini"></span>Issue 1</span> SpO₂ Single Point of Failure</h3>
+            <ul class="list">
+              <li>Degraded Mode(2단계 Triage)</li>
+              <li>호흡음 분석(CNN Spectrogram)</li>
+              <li>압력 패턴 기반 저산소 간접 추정</li>
+              <li>보호자 영상 기반 청색증 탐지(CV)</li>
+              <li>센서 미착용 감지 + 재부착 유도</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3><span class="pill bad"><span class="mini"></span>Issue 2</span> 실시간 처리 지연</h3>
+            <p class="muted"><b>목표 SLA</b>: SpO₂ &lt;85% 감지 후 <b>5초 이내</b> 알림</p>
+            <ul class="list">
+              <li>Edge ONNX 경량 모델 1차 분기</li>
+              <li>Cloud LLM/분석 병렬 호출</li>
+              <li>Critical Event는 로컬 SMS/앱 푸시 즉시 전송</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:14px;">
+          <h3><span class="pill bad"><span class="mini"></span>Issue 3</span> 보호자 과의존 리스크 (Human-in-the-loop 강제)</h3>
+          <div class="grid3" style="margin-top:10px;">
+            <div class="box" style="background:#fff;">
+              <h3>자동 호출(옵트아웃 불가)</h3>
+              <p>Level 3 발생 시 의료진 자동 호출 및 기록 생성</p>
+            </div>
+            <div class="box" style="background:#fff;">
+              <h3>에스컬레이션</h3>
+              <p>72시간 내 미확인 시 자동 에스컬레이션 + 케이스 리뷰</p>
+            </div>
+            <div class="box" style="background:#fff;">
+              <h3>UI 안전 설계</h3>
+              <p>“의료진 상담 필요” 시각적 강조 + 반복 고위험 자동 플래그</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <b>면책</b>: 본 페이지는 정보 제공 목적이며 의료 조언/진단이 아닙니다. 임계값 및 중재 기준은 담당 의료진과 협의하여 설정해야 합니다.
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" id="next">
+      <div class="head">
+        <div>
+          <h2>Next Step</h2>
+          <p>심사/투자 관점에서 필요한 연결고리를 한 페이지로 제시했습니다. 상세 문서를 링크로 연결해 운영하세요.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="grid2">
+          <div class="box">
+            <h3>바로 연결할 문서(권장)</h3>
+            <ul class="list">
+              <li>상세 지표 정의서(단위/계산/결측 규칙)</li>
+              <li>Triage 프로토콜(레벨/알림/에스컬레이션)</li>
+              <li>SaMD 문서 패키지(검증·품질·감사 로그)</li>
+              <li>실증 계획(후향/전향/다기관) + KPI 평가 설계</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>CTA</h3>
+            <p class="muted">아래 링크는 실제 경로로 교체해 사용하세요.</p>
+            <div class="cta">
+              <a class="btn primary" href="metrics.html">대시보드/지표 테이블 보기</a>
+              <a class="btn" href="whitepaper.pdf">기술백서(PDF)</a>
+              <a class="btn" href="contact.html">실증/연동 문의</a>
+            </div>
+            <p class="muted" style="margin-top:10px;">
+              <span class="kbd">운영 팁</span>
+              심사위원용은 “임상효과·안전성·인허가” 문구를 강조하고,
+              투자자용은 “시장·비용절감·확장성” 문구를 CTA 아래 2–3줄로 분기하면 설득력이 더 올라갑니다.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <b>보안/권한(요약)</b>: RBAC 기반 접근 통제, 감사 로그, PHI 최소화 원칙을 전제로 설계합니다(기관 정책에 맞춰 세부 적용).
+      </div>
+    </section>
+
+  </div>
 </body>
 </html>

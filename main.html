@@ -1,166 +1,791 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이사라 | Title Sequence</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
-<style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PRD | 중증소아 재택의료(인공호흡기 환아 관점)</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#0b1220;
+      --muted:#556070;
+      --line:rgba(11,18,32,.10);
+      --shadow:0 10px 26px rgba(11,18,32,.08);
 
-body{
-  margin:0;
-  background:#ffffff;
-  font-family:'Inter',sans-serif;
-  overflow:hidden;
-  color:#0f172a;
-}
+      --navy:#0f2a4a;
+      --blue:#0B4DA2;   /* clinical blue */
+      --teal:#00A3A1;   /* medical teal */
+      --purple:#6D28D9; /* accent */
 
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-}
+      --ok-bg:#e8f7ee;   --ok-fg:#166534;
+      --warn-bg:#fff3d6; --warn-fg:#92400e;
+      --bad-bg:#ffe4e6;  --bad-fg:#991b1b;
 
-.overlay{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.1) 100%);
-}
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(980px 520px at 10% 0%, rgba(11,77,162,.10), transparent 62%),
+        radial-gradient(980px 520px at 90% 8%, rgba(0,163,161,.08), transparent 60%),
+        radial-gradient(980px 520px at 30% 100%, rgba(109,40,217,.06), transparent 60%),
+        var(--bg);
+    }
+    a{color:var(--blue); text-decoration:none;}
+    .wrap{max-width:1160px; margin:0 auto; padding:28px 18px 76px;}
+    .top{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:14px;}
+    .brand{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background:linear-gradient(135deg, rgba(11,77,162,.20), rgba(0,163,161,.18));
+      border:1px solid var(--line);
+      box-shadow:0 10px 22px rgba(11,18,32,.08);
+    }
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg,var(--blue),var(--teal));}
+    h1{margin:10px 0 0; font-size:26px; line-height:1.15; letter-spacing:-.35px; color:var(--navy);}
+    .subtitle{margin:10px 0 0; color:var(--muted); font-size:14px; line-height:1.7; max-width:980px;}
 
-.subtitle{
-  position:absolute;
-  top:60%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-weight:300;
-  font-size:20px;
-  color:#475569;
-  opacity:0;
-  transition:2s ease;
-}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 11px; border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.78);
+      box-shadow:0 8px 18px rgba(11,18,32,.06);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .chip b{color:var(--text); font-weight:900;}
 
-.big-title{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:64px;
-  font-weight:900;
-  text-align:center;
-  opacity:0;
-  transition:2s ease;
-}
+    .toc{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.78);
+      box-shadow:0 10px 22px rgba(11,18,32,.06);
+      overflow:hidden;
+    }
+    .toc .head{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,42,74,.06), rgba(255,255,255,0));
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .toc .head .t{font-weight:900; color:var(--navy); font-size:13px;}
+    .toc .body{padding:12px 14px;}
+    .toc a{display:inline-block; margin:6px 10px 0 0; font-size:13px; color:var(--muted);}
+    .toc a:hover{color:var(--blue);}
 
-</style>
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .head{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,42,74,.06), rgba(255,255,255,0));
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+    }
+    .head h2{margin:0; font-size:14px; font-weight:900; color:var(--navy); letter-spacing:-.2px;}
+    .head p{margin:6px 0 0; font-size:12.5px; color:var(--muted); line-height:1.55; max-width:980px;}
+    .body{padding:16px;}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+    @media (max-width: 980px){ .grid2,.grid3{grid-template-columns:1fr;} }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      background:linear-gradient(180deg, rgba(11,18,32,.02), rgba(255,255,255,1));
+    }
+    .box h3{margin:0; font-size:13px; font-weight:900; color:var(--navy);}
+    .box p{margin:7px 0 0; font-size:12.8px; color:var(--muted); line-height:1.65;}
+    .list{margin:8px 0 0 18px; color:var(--muted); font-size:13px; line-height:1.75;}
+    .mono{font-family:var(--mono); font-size:12px;}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(11,18,32,.10);
+      font-size:12px; font-weight:900; white-space:nowrap;
+    }
+    .pill .mini{width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.9;}
+    .ok{background:var(--ok-bg); color:var(--ok-fg);}
+    .warn{background:var(--warn-bg); color:var(--warn-fg);}
+    .bad{background:var(--bad-bg); color:var(--bad-fg);}
+
+    .story{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .story .shead{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(11,77,162,.07), rgba(255,255,255,0));
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .sid{
+      font-family:var(--mono);
+      font-size:12px;
+      color:#0f2a4a;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(11,18,32,.12);
+      background:#f8fafc;
+      white-space:nowrap;
+    }
+    .stitle{margin:0; font-size:13px; color:var(--navy); font-weight:900; letter-spacing:-.1px;}
+    .stag{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
+    .story .sbody{padding:12px;}
+    .kv{
+      border:1px dashed rgba(11,18,32,.14);
+      border-radius:10px;
+      padding:10px;
+      background:rgba(243,246,251,.55);
+      margin-top:8px;
+    }
+    .k{font-size:12px; color:var(--muted); font-weight:900;}
+    .v{margin-top:6px; font-size:13px; color:var(--text); line-height:1.6;}
+    .ac{
+      margin-top:10px;
+      border-top:1px solid var(--line);
+      padding-top:10px;
+    }
+    .ac h4{margin:0; font-size:12.5px; color:var(--navy); font-weight:900;}
+    .ac ol{margin:8px 0 0 18px; color:var(--muted); font-size:13px; line-height:1.75;}
+
+    table{width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff;}
+    th, td{padding:11px 12px; font-size:13px; border-bottom:1px solid var(--line); vertical-align:top; text-align:left;}
+    th{background:#eef2f7; color:#334155; font-weight:900; font-size:12.5px;}
+    tr:last-child td{border-bottom:none;}
+
+    .foot{
+      padding:14px 16px;
+      border-top:1px solid var(--line);
+      background:rgba(11,18,32,.02);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.65;
+    }
+    .foot b{color:var(--text);}
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
 
-<canvas id="bg"></canvas>
-<div class="overlay"></div>
-<div class="subtitle" id="subtitle">Healthcare AI Strategist · Product Leader</div>
-<div class="big-title" id="bigTitle">Building Scalable AI in Healthcare.</div>
+    <!-- HEADER -->
+    <div class="top">
+      <div style="flex:1 1 620px; min-width:320px;">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <span class="kicker"><span class="dot"></span> PRD · Patient-Centered View</span>
+          <span class="kicker">대상: <b style="color:var(--text)">중증소아 재택의료 수혜자 중 인공호흡기 환아</b></span>
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
+        <h1>PRD — 중증소아 재택의료(인공호흡기 환아 관점)</h1>
+        <p class="subtitle">
+          이 문서는 “재택의료 서비스를 받는 인공호흡기 의존 환아”의 관점에서,
+          <b>서비스 경험(안전·일상·불필요한 내원 감소)</b>을 달성하기 위한 제품 요구사항(PRD) 초안입니다.
+          <br/>
+          ※ 본 문서는 의료 조언/진단이 아니며, 임상 판단/처방은 담당 의료진과 상의가 필요합니다.
+        </p>
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({canvas:document.getElementById("bg"),alpha:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
+        <div class="chips">
+          <div class="chip"><span class="dot"></span> User <b>환아(Primary) + 보호자(Proxy)</b></div>
+          <div class="chip"><span class="dot"></span> Clinical User <b>의료진(Decision Support)</b></div>
+          <div class="chip"><span class="dot"></span> Provider/Operator <b>재택의료팀(비-유저)</b></div>
+        </div>
 
-camera.position.z = 40; // 먼 거리에서 시작
+        <div class="toc" aria-label="Table of contents">
+          <div class="head">
+            <div class="t">목차</div>
+            <span class="kicker"><span class="dot"></span> PRD Section</span>
+          </div>
+          <div class="body">
+            <a href="#one-liner">1. 한 줄 정의</a>
+            <a href="#problem">2. 배경/문제정의</a>
+            <a href="#goals">3. 목표/비목표</a>
+            <a href="#users">4. 사용자 정의</a>
+            <a href="#journey">5. 핵심 시나리오(여정)</a>
+            <a href="#stories">6. User Stories</a>
+            <a href="#fr">7. 기능 요구사항(FR)</a>
+            <a href="#nfr">8. 비기능 요구사항(NFR)</a>
+            <a href="#metrics">9. 데이터/평가지표</a>
+            <a href="#mvp">10. MVP 범위</a>
+            <a href="#refs">부록. 근거 문서</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-function textToPoints(text){
-  const canvas=document.createElement("canvas");
-  const ctx=canvas.getContext("2d");
-  canvas.width=1600;
-  canvas.height=400;
-  ctx.font="bold 240px Arial";
-  ctx.textAlign="center";
-  ctx.fillText(text,canvas.width/2,260);
-  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  const pts=[];
-  for(let y=0;y<canvas.height;y+=4){
-    for(let x=0;x<canvas.width;x+=4){
-      const i=(y*canvas.width+x)*4;
-      if(data[i+3]>150){
-        pts.push({
-          x:(x-canvas.width/2)/140,
-          y:(canvas.height/2-y)/140,
-          z:(Math.random()-0.5)*4
-        });
-      }
-    }
-  }
-  return pts;
-}
+    <!-- 1. One-liner -->
+    <section class="section" id="one-liner">
+      <div class="head">
+        <div>
+          <h2>1. 제품/서비스 한 줄 정의</h2>
+          <p>환아가 집에서 인공호흡기와 함께 살아가며 “안전”과 “일상”을 유지하도록 돕는 재택의료 연계 서비스/제품.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>Safety</span>
+          <span class="pill ok"><span class="mini"></span>Continuity</span>
+          <span class="pill warn"><span class="mini"></span>Burden↓</span>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>서비스 핵심(환아 관점)</h3>
+          <ul class="list">
+            <li>갑자기 숨이 불편해질 때도 “어떻게 해야 하는지”가 명확하다</li>
+            <li>필요한 경우에만 병원에 가고, 불필요한 이동/대기가 줄어든다</li>
+            <li>보호자가 교육과 상담을 통해 “안전한 돌봄”을 지속할 수 있다</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>프로토콜 기반 서비스 구성(요약)</h3>
+          <ul class="list">
+            <li>관리계획 수립 및 정기 점검</li>
+            <li>방문 진료/간호/재활 + 교육·상담</li>
+            <li>전화상담 기반 상시적 환자관리(현실 제약 반영)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-const pts=textToPoints("이사라");
-const count=pts.length;
+    <!-- 2. Problem -->
+    <section class="section" id="problem">
+      <div class="head">
+        <div>
+          <h2>2. 배경 및 문제정의(환아 관점)</h2>
+          <p>환아와 가족이 실제로 겪는 “집에서의 돌봄 난이도”와 “병원 이용 부담”을 제품 문제로 정의합니다.</p>
+        </div>
+      </div>
+      <div class="body grid3">
+        <div class="box">
+          <h3>의료공백</h3>
+          <p>야간/휴일/외래 사이 시간에는 상태 변화를 스스로 판단해야 하는 부담이 크다.</p>
+        </div>
+        <div class="box">
+          <h3>기기 의존</h3>
+          <p>인공호흡기/회로/마스크 문제는 불편과 위험을 동시에 유발하므로 빠른 점검 루트가 필요하다.</p>
+        </div>
+        <div class="box">
+          <h3>내원 부담</h3>
+          <p>이동·대기·입원은 환아/가족 모두에 큰 부담이므로 “필요한 내원만” 유도해야 한다.</p>
+        </div>
+      </div>
+    </section>
 
-const geo=new THREE.BufferGeometry();
-const pos=new Float32Array(count*3);
+    <!-- 3. Goals -->
+    <section class="section" id="goals">
+      <div class="head">
+        <div>
+          <h2>3. 목표(Goals) / 비목표(Non-goals)</h2>
+          <p>서비스가 달성해야 할 가치와, 의도하지 않는 범위를 명확히 분리합니다.</p>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>Goals</h3>
+          <ul class="list">
+            <li><b>안전</b>: 위험 신호를 조기에 인지하고 적절한 대응 경로(가이드/상담/내원)를 제공</li>
+            <li><b>지속성</b>: 환아 상태에 맞춘 관리계획이 정기적으로 점검/업데이트됨(월 단위 점검, 연 단위 재평가)</li>
+            <li><b>경험</b>: 보호자 교육·상담과 기록을 통해 자기관리 역량 강화</li>
+            <li><b>효율</b>: 불필요한 응급실/외래 이용 감소(필요 내원은 놓치지 않음)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Non-goals</h3>
+          <ul class="list">
+            <li>응급상황을 대체하지 않음(응급은 119/응급실 우선)</li>
+            <li>앱/AI가 진단·처방을 자동으로 내리지 않음(Decision Support/연계 중심)</li>
+            <li>재택의료팀 운영(인력/행정)은 “유저 기능”이 아니라 운영 요구사항으로 분리 관리</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-for(let i=0;i<count;i++){
-  pos[i*3]=(Math.random()-0.5)*80;
-  pos[i*3+1]=(Math.random()-0.5)*80;
-  pos[i*3+2]=(Math.random()-0.5)*80;
-}
+    <!-- 4. Users -->
+    <section class="section" id="users">
+      <div class="head">
+        <div>
+          <h2>4. 사용자 정의(User) — 환아 중심</h2>
+          <p>PRD의 User는 “서비스 가치의 주체”를 기준으로 정의합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:180px;">구분</th>
+              <th>정의</th>
+              <th style="width:240px;">제품 접점</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Primary User</b><br/><span class="muted">환아</span></td>
+              <td class="muted">서비스가 궁극적으로 안전/일상/삶의 질을 개선해야 하는 대상(인공호흡기 의존 중증소아)</td>
+              <td class="muted">직접 조작이 어렵다면 보호자 UX로 대체(Proxy)</td>
+            </tr>
+            <tr>
+              <td><b>Proxy Operator</b><br/><span class="muted">보호자</span></td>
+              <td class="muted">실제 앱 조작/상담 요청/조치 수행을 담당하는 대리 사용자</td>
+              <td class="muted">App: 알림/가이드/상담/기록</td>
+            </tr>
+            <tr>
+              <td><b>Clinical User</b><br/><span class="muted">의료진</span></td>
+              <td class="muted">의사결정 주체(Decision Support). Level 3 확인 및 개입/설정 조정 책임(HITL)</td>
+              <td class="muted">Dashboard: 우선순위/케이스/근거/리포트</td>
+            </tr>
+            <tr>
+              <td><b>Provider/Operator</b><br/><span class="muted">재택의료팀</span></td>
+              <td class="muted">서비스 제공 주체(운영/방문/상담/회의). 유저가 아니라 운영 요구사항으로 분리</td>
+              <td class="muted">운영 콘솔(옵션), 업무 프로토콜</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="foot">
+        <b>Intended User(규제 관점)</b>: 보호자(Proxy)와 의료진(Clinical User)을 명확히 구분하고, 진단/처방이 아닌 의사결정 지원으로 설계합니다.
+      </div>
+    </section>
 
-geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+    <!-- 5. Journey -->
+    <section class="section" id="journey">
+      <div class="head">
+        <div>
+          <h2>5. 핵심 시나리오(환아 여정 기반)</h2>
+          <p>재택의료 프로토콜 흐름을 제품 여정으로 번역합니다.</p>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>온보딩(등록) & 초기평가</h3>
+          <ul class="list">
+            <li>대상자 등록 + 보호자 동의 + 비상연락망 확보</li>
+            <li>재택의료 관리계획서 생성(기본정보/최근 의료이용/현재 서비스/교육 환경 등)</li>
+            <li>기기(인공호흡기) 사용 현황 및 위험 요소 점검</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>정기 방문 + 교육·상담</h3>
+          <ul class="list">
+            <li>방문 진료/간호/재활(처방 범위) 제공</li>
+            <li>보호자 대상 교육·상담 제공 및 기록</li>
+            <li>반복 문제(예: 회로 이탈/누출) 예방 중심으로 재교육</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>상시적 환자관리(상담/모니터링)</h3>
+          <ul class="list">
+            <li>정규시간 전화상담 기반 요청 대응(현실적 운영 제약 반영)</li>
+            <li>최소 월 1회 관리계획 점검/모니터링 및 기록</li>
+            <li>악화 의심 시 즉시 내원/의료진 연계</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>재평가/연장/퇴록</h3>
+          <ul class="list">
+            <li>연 1회 재평가(초기평가 수준) 및 연장/퇴록 결정</li>
+            <li>필요 시 팀 논의 기반 계획 재수립</li>
+            <li>서비스 불필요/원치 않음/안전상 불가 등 퇴록 조건 관리</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-const mat=new THREE.PointsMaterial({
-  size:0.05,
-  color:0x0f172a,
-  transparent:true,
-  opacity:0.9
-});
+    <!-- 6. User Stories (patient-centered) -->
+    <section class="section" id="stories">
+      <div class="head">
+        <div>
+          <h2>6. User Stories (환아 관점, 보호자 Proxy 실행)</h2>
+          <p>환아 가치(안전·불안 감소·일상 유지)를 중심으로 작성하고, 실제 조작은 보호자가 수행합니다.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>Patient Value</span>
+          <span class="pill warn"><span class="mini"></span>Proxy UX</span>
+          <span class="pill bad"><span class="mini"></span>Safety-first</span>
+        </div>
+      </div>
 
-const particles=new THREE.Points(geo,mat);
-scene.add(particles);
+      <div class="body" style="display:grid; gap:12px;">
+        <!-- P-01 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-P-01</div>
+              <p class="stitle">악화가 의심될 때, 즉시 올바른 대응 경로로 연결되고 싶다</p>
+            </div>
+            <div class="stag">
+              <span class="pill bad"><span class="mini"></span>Emergency</span>
+              <span class="pill warn"><span class="mini"></span>Routing</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="kv">
+              <div class="k">As a</div>
+              <div class="v">인공호흡기 의존 환아(가치 주체)</div>
+            </div>
+            <div class="kv">
+              <div class="k">I want</div>
+              <div class="v">숨이 불편해지거나 상태가 급격히 변할 때, 보호자가 즉시 상담/내원/응급 루트를 찾을 수 있길 원한다.</div>
+            </div>
+            <div class="kv">
+              <div class="k">So that</div>
+              <div class="v">위험을 줄이고 빠르게 안정될 수 있다.</div>
+            </div>
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>위험 수준(Level)에 따라 “관찰/외래/즉시 응급”이 한 문장으로 제시된다</li>
+                <li>응급(Level 3)일 때는 안내가 최상단에 고정되고 추가 클릭 없이 연락/가이드로 이동된다</li>
+                <li>모든 안내에는 “진단/처방이 아님” 및 “의료진/응급실 우선” 안전 문구가 포함된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
 
-let phase=0; // 0: form, 1: hold, 2: flythrough
+        <!-- P-02 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-P-02</div>
+              <p class="stitle">기기(회로/마스크) 문제가 생기면 단계별 점검이 쉽고 빠르길 원한다</p>
+            </div>
+            <div class="stag">
+              <span class="pill warn"><span class="mini"></span>Device</span>
+              <span class="pill ok"><span class="mini"></span>Checklist</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="kv"><div class="k">As a</div><div class="v">인공호흡기 의존 환아</div></div>
+            <div class="kv"><div class="k">I want</div><div class="v">회로 이탈/누출/마스크 불편 등 기기 문제가 의심될 때, 보호자가 바로 점검 순서를 안내받길 원한다.</div></div>
+            <div class="kv"><div class="k">So that</div><div class="v">불편과 위험을 동시에 줄이고 야간 불안을 낮출 수 있다.</div></div>
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>“점검 1→2→3단계(체크리스트)” 형태로 제공된다</li>
+                <li>각 단계에 “정상/비정상 판단 기준”이 짧게 포함된다</li>
+                <li>반복 발생 시 “외래 점검/방문 점검 권고”가 자동 노출된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
 
-function animate(){
-  requestAnimationFrame(animate);
+        <!-- P-03 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-P-03</div>
+              <p class="stitle">병원에 자주 가지 않아도 집에서 정기적으로 상태 확인과 재활을 받을 수 있길 원한다</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Continuity</span>
+              <span class="pill warn"><span class="mini"></span>Visits</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="kv"><div class="k">As a</div><div class="v">인공호흡기 의존 환아</div></div>
+            <div class="kv"><div class="k">I want</div><div class="v">정기 방문(진료/간호/재활)과 교육이 집에서 이어지길 원한다.</div></div>
+            <div class="kv"><div class="k">So that</div><div class="v">학교/일상을 더 유지하고 불필요한 이동을 줄일 수 있다.</div></div>
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>방문 일정(진료/간호/재활)이 달력 형태로 공유된다</li>
+                <li>방문 후 “오늘 한 것(평가/교육/조치)”이 3줄 요약으로 남는다</li>
+                <li>처방/진료 변경이 필요한 경우 의료진 확인 플로우로 연결된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
 
-  const arr=geo.attributes.position.array;
+        <!-- P-04 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-P-04</div>
+              <p class="stitle">내 상태 변화에 따라 관리계획이 업데이트되길 원한다</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Plan</span>
+              <span class="pill warn"><span class="mini"></span>Review</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="kv"><div class="k">As a</div><div class="v">인공호흡기 의존 환아</div></div>
+            <div class="kv"><div class="k">I want</div><div class="v">악화/호전 등 상태 변화가 있을 때 관리계획이 최신화되길 원한다.</div></div>
+            <div class="kv"><div class="k">So that</div><div class="v">불필요한 내원·불안은 줄이고 필요한 개입은 놓치지 않는다.</div></div>
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>월 1회 이상 “계획 점검/모니터링 완료” 상태가 표시된다</li>
+                <li>연 1회 재평가 일정과 결과(연장/퇴록/변경)가 기록된다</li>
+                <li>계획 변경 시 보호자에게 “무엇이 바뀌었는지(핵심 3개)”가 공유된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
 
-  if(phase===0){
-    for(let i=0;i<count;i++){
-      arr[i*3]+= (pts[i].x-arr[i*3])*0.02;
-      arr[i*3+1]+= (pts[i].y-arr[i*3+1])*0.02;
-      arr[i*3+2]+= (pts[i].z-arr[i*3+2])*0.02;
-    }
-  }
+        <!-- P-05 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-P-05</div>
+              <p class="stitle">보호자가 교육·상담을 반복해서 받고 기록이 남아 돌봄이 안정적이길 원한다</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Education</span>
+              <span class="pill warn"><span class="mini"></span>Record</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="kv"><div class="k">As a</div><div class="v">인공호흡기 의존 환아</div></div>
+            <div class="kv"><div class="k">I want</div><div class="v">보호자가 기기/상태를 이해하도록 교육과 상담이 표준화되고 기록되길 원한다.</div></div>
+            <div class="kv"><div class="k">So that</div><div class="v">보호자의 불안을 줄이고, 내 돌봄이 더 안정적으로 유지된다.</div></div>
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>교육/상담 항목(예: 기기 점검, 증상 관찰, 비상 대응)이 체크리스트로 관리된다</li>
+                <li>교육 기록은 날짜/담당/주제별로 검색된다</li>
+                <li>반복 알람/반복 문의가 있으면 관련 교육 콘텐츠를 자동 추천한다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
 
-  if(phase===2){
-    camera.position.z -= 0.3; // 카메라가 이름을 통과
-  }
+      </div>
+    </section>
 
-  geo.attributes.position.needsUpdate=true;
-  renderer.render(scene,camera);
-}
+    <!-- 7. Functional Requirements -->
+    <section class="section" id="fr">
+      <div class="head">
+        <div>
+          <h2>7. 기능 요구사항 (Functional Requirements)</h2>
+          <p>프로토콜의 핵심 축(관리계획·방문·상담·재평가)을 제품 기능으로 구체화합니다.</p>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>FR-A. 관리계획(Plan)</h3>
+          <ul class="list">
+            <li><b>FR-A1</b> 환자별 관리계획서 생성/조회/수정(기본정보, 최근 의료이용, 서비스 이용 현황 등)</li>
+            <li><b>FR-A2</b> 월 1회 이상 점검/모니터링 수행 체크 및 기록</li>
+            <li><b>FR-A3</b> 연 1회 재평가(연장/퇴록/계획 변경) 일정·결과 관리</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>FR-B. 방문(Visit) + 교육·상담(Education)</h3>
+          <ul class="list">
+            <li><b>FR-B1</b> 방문 일정 관리(진료/간호/재활) 및 보호자 공유</li>
+            <li><b>FR-B2</b> 방문 교육·상담 기록(주제/내용/담당/다음 액션)</li>
+            <li><b>FR-B3</b> 반복 문제(회로 분리/누출 등) 발생 시 재교육 트리거</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>FR-C. 상담/연계(Access)</h3>
+          <ul class="list">
+            <li><b>FR-C1</b> 정규시간 상담 접점(클릭 투 콜/요청 티켓)</li>
+            <li><b>FR-C2</b> 상담 요청→응답→결과 기록(누락 방지)</li>
+            <li><b>FR-C3</b> 위험 수준에 따라 “응급/외래/관찰” 라우팅</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>FR-D. 의료진(Decision Support)</h3>
+          <ul class="list">
+            <li><b>FR-D1</b> 고위험 환자 우선순위(큐) + 근거 표시</li>
+            <li><b>FR-D2</b> Level 3 케이스 생성/확인/에스컬레이션(HITL)</li>
+            <li><b>FR-D3</b> 30일 요약 리포트(사용/환기/압력/누출/알람)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <b>주의</b>: “재택의료팀 운영(인력/회의/행정)”은 User 기능이 아니라 별도의 Operational Requirements로 관리하는 것이 PRD 구조상 안전합니다.
+      </div>
+    </section>
 
-animate();
+    <!-- 8. NFR -->
+    <section class="section" id="nfr">
+      <div class="head">
+        <div>
+          <h2>8. 비기능 요구사항 (NFR)</h2>
+          <p>안전·보안·신뢰·사용성을 제품 수준에서 보장하기 위한 조건입니다.</p>
+        </div>
+      </div>
+      <div class="body grid3">
+        <div class="box">
+          <h3>NFR-1 안전(Safety)</h3>
+          <ul class="list">
+            <li>응급(Level 3) 안내는 가장 앞에, 가장 적은 클릭으로</li>
+            <li>진단/처방 유도 금지(안전 문구 + 의료진 상담 권고)</li>
+            <li>Degraded Mode(센서/데이터 불안정) 명확 표시</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>NFR-2 보안/프라이버시</h3>
+          <ul class="list">
+            <li>동의 기반 접근 + 권한(RBAC)</li>
+            <li>감사 로그(조회/수정/확인/에스컬레이션)</li>
+            <li>PHI 최소화 원칙</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>NFR-3 신뢰/가용성</h3>
+          <ul class="list">
+            <li>월 1회 점검 누락 방지(자동 리마인더)</li>
+            <li>상담 요청 티켓의 상태 추적(접수/진행/완료)</li>
+            <li>핵심 화면(응급 라우팅)은 저사양에서도 동작</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-/* 타이틀 시퀀스 타이밍 */
+    <!-- 9. Metrics -->
+    <section class="section" id="metrics">
+      <div class="head">
+        <div>
+          <h2>9. 데이터/평가지표 설계</h2>
+          <p>평가 프레임(구조-과정-결과)을 PRD 성과지표로 정렬합니다. (심사/확산/운영에 유리)</p>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:140px;">구분</th>
+              <th>지표 예시(최소)</th>
+              <th style="width:220px;">측정 주기</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Structure</b><br/><span class="muted">역량</span></td>
+              <td class="muted">인력 구성, 교육 이수, 자문/운영 체계, 보안/권한 정책</td>
+              <td class="muted">분기/반기</td>
+            </tr>
+            <tr>
+              <td><b>Process</b><br/><span class="muted">수행</span></td>
+              <td class="muted">상담 횟수/목적/형태/소요시간, 방문 수행률, 월 1회 점검 이행률, 교육 수행률</td>
+              <td class="muted">월/분기</td>
+            </tr>
+            <tr>
+              <td><b>Result</b><br/><span class="muted">성과</span></td>
+              <td class="muted">응급실 방문, 입원/재입원, 재원기간, 가족 만족도/삶의 질, 안전 이벤트(Zero harm)</td>
+              <td class="muted">분기/연</td>
+            </tr>
+          </tbody>
+        </table>
 
-setTimeout(()=>{
-  document.getElementById("subtitle").style.opacity=1;
-},4000);
+        <div class="grid2" style="margin-top:12px;">
+          <div class="box">
+            <h3>인공호흡기 원격 지표(확장 옵션)</h3>
+            <p>
+              본 PRD는 “재택의료 프로토콜 기반”이므로, 기술 확장 시 인공호흡기 데이터(MV/RR/PIP/Leak 등)를
+              <b>Process/Result 지표의 보조 근거</b>로 연결할 수 있습니다.
+            </p>
+            <ul class="list">
+              <li>예: 반복 회로 분리/누출 → 교육/피팅 점검 성과 측정</li>
+              <li>예: 사용 시간/패턴 → 자기관리 지속성(프로세스) 보조 지표</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>운영지표(필수)</h3>
+            <ul class="list">
+              <li>월 1회 점검 이행률(누락 0 목표)</li>
+              <li>상담 응답 시간(접수→1차 응답)</li>
+              <li>Level 3 발생 시 의료진 확인 시간(ACK)</li>
+              <li>교육/상담 기록 작성률</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-setTimeout(()=>{
-  phase=1;
-},5000);
+    <!-- 10. MVP -->
+    <section class="section" id="mvp">
+      <div class="head">
+        <div>
+          <h2>10. MVP 범위(현실 제약 반영)</h2>
+          <p>운영 현실을 고려해 “정규시간 상담 + 정기 점검/방문 + 기록체계”부터 구현합니다.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>Plan</span>
+          <span class="pill ok"><span class="mini"></span>Visit</span>
+          <span class="pill warn"><span class="mini"></span>Access(9–18)</span>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>MVP 포함</h3>
+          <ul class="list">
+            <li>관리계획서/기록지(서식 기반) + 월 1회 점검 체크</li>
+            <li>방문 일정/수행/교육·상담 기록</li>
+            <li>정규시간 상담 접점 + 요청 티켓 + 라우팅(관찰/외래/응급)</li>
+            <li>의료진 대시보드(고위험 큐, Level 3 케이스, 30일 요약)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>MVP 제외(Phase 2+)</h3>
+          <ul class="list">
+            <li>24시간 온콜/상시 대응 완전 자동화(인력/정책 필요)</li>
+            <li>AI 기반 예측(학습 데이터/검증 필요)</li>
+            <li>대규모 다기관 EMR 연동(표준/승인 필요)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <b>면책</b>: 본 PRD는 서비스/제품 설계 문서이며 의료 조언이 아닙니다. 임계값, 중재 기준, 응급 대응 프로토콜은 반드시 기관/의료진 기준에 맞춰 확정해야 합니다.
+      </div>
+    </section>
 
-setTimeout(()=>{
-  phase=2;
-  document.getElementById("bigTitle").style.opacity=1;
-},7000);
+    <!-- References -->
+    <section class="section" id="refs">
+      <div class="head">
+        <div>
+          <h2>부록. 근거 문서(Reference)</h2>
+          <p>본 PRD는 업로드된 “중증소아 재택의료 서비스 프로토콜 및 평가지표 개발 연구”의 흐름(관리계획·방문·교육·상담·재평가·구조/과정/결과 지표)을 제품 요구사항으로 재구성했습니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="box">
+          <h3>Reference</h3>
+          <p class="muted">
+            중증소아 재택의료 서비스 프로토콜 및 평가지표 개발 연구 (PDF, 업로드 문서)
+          </p>
+          <ul class="list">
+            <li>핵심 구성: 관리계획 수립, 교육·상담, 방문 진료/간호/재활, 전화상담 기반 환자관리</li>
+            <li>평가 프레임: 구조(Structure)–과정(Process)–결과(Result)</li>
+            <li>운영 요소: 정기 점검/재평가 및 기록체계</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-</script>
+  </div>
 </body>
 </html>

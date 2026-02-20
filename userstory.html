@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PRD | User Stories (Caregiver & Clinician)</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#0b1220;
+      --muted:#556070;
+      --line:rgba(11,18,32,.10);
+      --shadow:0 10px 26px rgba(11,18,32,.08);
+
+      --navy:#0f2a4a;
+      --blue:#0B4DA2;
+      --teal:#00A3A1;
+      --purple:#6D28D9;
+
+      --ok-bg:#e8f7ee;   --ok-fg:#166534;
+      --warn-bg:#fff3d6; --warn-fg:#92400e;
+      --bad-bg:#ffe4e6;  --bad-fg:#991b1b;
+
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(980px 520px at 10% 0%, rgba(11,77,162,.10), transparent 62%),
+        radial-gradient(980px 520px at 90% 8%, rgba(0,163,161,.08), transparent 60%),
+        radial-gradient(980px 520px at 30% 100%, rgba(109,40,217,.06), transparent 60%),
+        var(--bg);
+    }
+    .wrap{max-width:1120px; margin:0 auto; padding:28px 18px 70px;}
+    .top{
+      display:flex; justify-content:space-between; align-items:flex-end;
+      gap:14px; flex-wrap:wrap; margin-bottom:14px;
+    }
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg,var(--blue),var(--teal));}
+    h1{
+      margin:10px 0 0;
+      font-size:24px; line-height:1.2; letter-spacing:-.3px;
+      color:var(--navy);
+    }
+    .subtitle{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:13.5px; line-height:1.65;
+      max-width:900px;
+    }
+    .chiprow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 11px; border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.78);
+      box-shadow:0 8px 18px rgba(11,18,32,.06);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .chip b{color:var(--text); font-weight:900;}
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .head{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,42,74,.06), rgba(255,255,255,0));
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+    }
+    .head h2{margin:0; font-size:14px; font-weight:900; color:var(--navy); letter-spacing:-.2px;}
+    .head p{margin:6px 0 0; font-size:12.5px; color:var(--muted); line-height:1.55; max-width:900px;}
+    .body{padding:16px;}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr;} }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      background:linear-gradient(180deg, rgba(11,18,32,.02), rgba(255,255,255,1));
+    }
+    .box h3{margin:0; font-size:13px; font-weight:900; color:var(--navy);}
+    .box p{margin:7px 0 0; font-size:12.8px; color:var(--muted); line-height:1.65;}
+    .list{margin:8px 0 0 18px; color:var(--muted); font-size:13px; line-height:1.75;}
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(11,18,32,.10);
+      font-size:12px; font-weight:900; white-space:nowrap;
+    }
+    .pill .mini{width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.9;}
+    .ok{background:var(--ok-bg); color:var(--ok-fg);}
+    .warn{background:var(--warn-bg); color:var(--warn-fg);}
+    .bad{background:var(--bad-bg); color:var(--bad-fg);}
+
+    .story{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .story .shead{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(11,77,162,.07), rgba(255,255,255,0));
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .sid{
+      font-family:var(--mono);
+      font-size:12px;
+      color:#0f2a4a;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(11,18,32,.12);
+      background:#f8fafc;
+      white-space:nowrap;
+    }
+    .stitle{
+      margin:0;
+      font-size:13px;
+      color:var(--navy);
+      font-weight:900;
+      letter-spacing:-.1px;
+    }
+    .stag{
+      display:flex; gap:6px; flex-wrap:wrap;
+      align-items:center;
+    }
+    .story .sbody{padding:12px;}
+    .triple{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      margin-top:8px;
+    }
+    .kv{
+      border:1px dashed rgba(11,18,32,.14);
+      border-radius:10px;
+      padding:10px;
+      background:rgba(243,246,251,.55);
+    }
+    .k{font-size:12px; color:var(--muted); font-weight:900;}
+    .v{margin-top:6px; font-size:13px; color:var(--text); line-height:1.6;}
+    .ac{
+      margin-top:10px;
+      border-top:1px solid var(--line);
+      padding-top:10px;
+    }
+    .ac h4{
+      margin:0;
+      font-size:12.5px;
+      color:var(--navy);
+      font-weight:900;
+    }
+    .ac ol{
+      margin:8px 0 0 18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.75;
+    }
+    .foot{
+      padding:14px 16px;
+      border-top:1px solid var(--line);
+      background:rgba(11,18,32,.02);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.65;
+    }
+    .foot b{color:var(--text);}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="top">
+      <div>
+        <span class="kicker"><span class="dot"></span> PRD · User Stories</span>
+        <h1>소아 만성호흡부전 재택 모니터링 (Agentic AI) — User Story 정리본</h1>
+        <p class="subtitle">
+          본 섹션은 PRD에 포함되는 <b>User Story + Acceptance Criteria</b>입니다.
+          Intended Users는 <b>보호자(Caregiver)</b>와 <b>의료진(Clinician)</b>으로 한정합니다.
+        </p>
+      </div>
+      <div class="chiprow">
+        <div class="chip"><span class="dot"></span> Intended Users <b>2</b></div>
+        <div class="chip"><span class="dot"></span> Format <b>Epic → Story → AC</b></div>
+        <div class="chip"><span class="dot"></span> Traceability <b>ID 부여</b></div>
+      </div>
+    </div>
+
+    <!-- Intended Users -->
+    <section class="section" id="intended-users">
+      <div class="head">
+        <div>
+          <h2>1. Intended Users 정의</h2>
+          <p>SaMD/심사 관점에서 “누가 사용하는가”를 명확히 정의합니다.</p>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>Primary User 1: 보호자 (Caregiver)</h3>
+          <ul class="list">
+            <li>가정 내 <b>실행 주체</b> (조치 수행)</li>
+            <li>의료 의사결정 권한 없음 (진단/처방 불가)</li>
+            <li>모바일 앱 기반 인터페이스 사용</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Primary User 2: 의료진 (Clinician)</h3>
+          <ul class="list">
+            <li><b>의사결정 주체</b> (Decision Support User)</li>
+            <li>Dashboard 기반 케이스 확인 및 개입</li>
+            <li>Human-in-the-loop 책임자 (Level 3 확인/에스컬레이션)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <b>Note</b>: 재택의료팀은 User가 아니라 운영/워크플로우 소유자(Operator/Stakeholder)이며, 별도의 Operational Requirements로 관리합니다.
+      </div>
+    </section>
+
+    <!-- Caregiver Stories -->
+    <section class="section" id="caregiver">
+      <div class="head">
+        <div>
+          <h2>2. 보호자 User Stories</h2>
+          <p><b>EPIC C1</b> — 위험 인지 및 대응(알림 → 가이드 → 품질관리 → 상담 판단)</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>App</span>
+          <span class="pill warn"><span class="mini"></span>Safety-first</span>
+        </div>
+      </div>
+
+      <div class="body" style="display:grid; gap:12px;">
+
+        <!-- US-C1-01 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-C1-01</div>
+              <p class="stitle">실시간 위험 알림 수신</p>
+            </div>
+            <div class="stag">
+              <span class="pill bad"><span class="mini"></span>Level 3</span>
+              <span class="pill warn"><span class="mini"></span>SLA</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv">
+                <div class="k">As a</div>
+                <div class="v">보호자</div>
+              </div>
+              <div class="kv">
+                <div class="k">I want</div>
+                <div class="v">위험 상황 발생 시 즉시 알림을 받고</div>
+              </div>
+              <div class="kv">
+                <div class="k">So that</div>
+                <div class="v">아이의 상태 악화를 지연 없이 인지할 수 있다.</div>
+              </div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>Level 3 이벤트 발생 시 <b>5초 이내</b> 푸시 알림 발송</li>
+                <li>알림에 포함: 이벤트 유형(예: SpO₂ 저하/Low TV/회로 분리), 발생 시각, 위험 단계(Level)</li>
+                <li>알림 클릭 시 해당 이벤트 상세 화면으로 이동</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-C1-02 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-C1-02</div>
+              <p class="stitle">단계별 행동 가이드 제공</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Checklist</span>
+              <span class="pill warn"><span class="mini"></span>HITL</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">보호자</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">위험 단계에 맞는 행동 지침을 단계별로 안내받고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">표준 절차에 따라 대응할 수 있다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>Level 1~3별 가이드 분기</li>
+                <li>단계별 체크리스트 UI 제공(1→2→3단계)</li>
+                <li>각 단계에 “다음 단계로 넘어가는 조건” 명시</li>
+                <li>Level 3의 경우 “의료진 자동 연락 진행 중” 상태 표시</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-C1-03 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-C1-03</div>
+              <p class="stitle">센서 이상 및 미착용 감지</p>
+            </div>
+            <div class="stag">
+              <span class="pill warn"><span class="mini"></span>Degraded</span>
+              <span class="pill ok"><span class="mini"></span>Quality</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">보호자</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">센서 미착용 또는 신호 오류를 즉시 안내받고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">데이터 누락 없이 안전을 유지할 수 있다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>SpO₂ 신호 품질 저하 감지 시 알림 발생</li>
+                <li>재부착 가이드 UI 제공</li>
+                <li>정상 신호 복구 시 “정상” 상태 표시</li>
+                <li>센서 불안정 시 Degraded Mode 자동 전환 안내</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-C1-04 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-C1-04</div>
+              <p class="stitle">상담 필요 여부 명확화</p>
+            </div>
+            <div class="stag">
+              <span class="pill bad"><span class="mini"></span>Safety</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">보호자</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">지금 병원에 연락해야 하는지 명확히 알 수 있고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">과소 대응이나 과잉 대응을 줄인다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>Level 3는 “즉시 응급실 방문”을 명확히 표시</li>
+                <li>Level 2는 “외래 예약 권장”을 명확히 표시</li>
+                <li>모호한 상황 질문/입력 시 “안전 우선” 안내가 우선 노출</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-C1-05 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-C1-05</div>
+              <p class="stitle">신뢰 가능한 Q&A 응답</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>RAG</span>
+              <span class="pill warn"><span class="mini"></span>Guardrail</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">보호자</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">질문에 대해 출처가 있는 답변을 받고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">잘못된 정보에 기반한 판단을 하지 않도록 한다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>답변 하단에 출처(문서/프로토콜/가이드) 표시</li>
+                <li>응급성 질문은 Triage 우선 처리(안내/알림)로 전환</li>
+                <li>진단/처방 요구 시 의료 상담 권고 문구 자동 삽입</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Clinician Stories -->
+    <section class="section" id="clinician">
+      <div class="head">
+        <div>
+          <h2>3. 의료진 User Stories</h2>
+          <p><b>EPIC CL1</b> — 임상 의사결정 지원(우선순위 → 케이스 생성 → 근거 확인 → 임계값 조정 → 요약 리포트)</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="pill ok"><span class="mini"></span>Dashboard</span>
+          <span class="pill warn"><span class="mini"></span>Decision Support</span>
+        </div>
+      </div>
+
+      <div class="body" style="display:grid; gap:12px;">
+
+        <!-- US-CL1-01 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-CL1-01</div>
+              <p class="stitle">고위험 환자 우선순위 확인</p>
+            </div>
+            <div class="stag">
+              <span class="pill warn"><span class="mini"></span>Queue</span>
+              <span class="pill ok"><span class="mini"></span>Explain</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">의료진</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">위험 환자가 자동 정렬된 대시보드를 보고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">진료 및 개입 우선순위를 효율적으로 결정한다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>환자 리스트가 위험점수 기준으로 자동 정렬된다</li>
+                <li>각 환자 카드에 위험 근거 Top 3가 표시된다</li>
+                <li>Level 3 환자는 리스트 상단에 고정된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-CL1-02 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-CL1-02</div>
+              <p class="stitle">Level 3 자동 케이스 생성</p>
+            </div>
+            <div class="stag">
+              <span class="pill bad"><span class="mini"></span>HITL</span>
+              <span class="pill warn"><span class="mini"></span>Audit</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">의료진</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">응급 이벤트 발생 시 자동으로 케이스가 생성되고 알림을 받고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">개입 지연을 방지한다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>Level 3 발생 시 자동 케이스가 생성된다</li>
+                <li>의료진에게 알림이 발송된다</li>
+                <li>확인(ack) 전까지 “미확인” 상태가 유지된다</li>
+                <li>설정된 시간이 경과하면 자동 에스컬레이션된다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-CL1-03 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-CL1-03</div>
+              <p class="stitle">트리아지 판정 근거 확인</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Explainable</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">의료진</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">시스템이 왜 해당 Level을 판정했는지 확인하고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">임상적으로 설명 가능한 결정을 한다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>판정 근거 지표가 표시된다(예: SpO₂ 82%, RR 38 등)</li>
+                <li>Rule 기반/ML 기반 여부가 구분되어 표시된다</li>
+                <li>판정 로그를 기록/조회할 수 있다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-CL1-04 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-CL1-04</div>
+              <p class="stitle">환자별 임계값 조정</p>
+            </div>
+            <div class="stag">
+              <span class="pill warn"><span class="mini"></span>Config</span>
+              <span class="pill ok"><span class="mini"></span>Versioning</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">의료진</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">환자 특성에 따라 임계값을 조정하고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">과잉 알람과 누락을 최소화한다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>환자별 프로파일 설정이 가능하다</li>
+                <li>임계값 변경 시 버전이 기록된다</li>
+                <li>변경 이력을 조회할 수 있다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- US-CL1-05 -->
+        <div class="story">
+          <div class="shead">
+            <div>
+              <div class="sid">US-CL1-05</div>
+              <p class="stitle">30일 요약 리포트 확인</p>
+            </div>
+            <div class="stag">
+              <span class="pill ok"><span class="mini"></span>Report</span>
+              <span class="pill warn"><span class="mini"></span>Export</span>
+            </div>
+          </div>
+          <div class="sbody">
+            <div class="triple">
+              <div class="kv"><div class="k">As a</div><div class="v">의료진</div></div>
+              <div class="kv"><div class="k">I want</div><div class="v">외래 전에 30일 요약 데이터를 확인하고</div></div>
+              <div class="kv"><div class="k">So that</div><div class="v">진료 효율을 높인다.</div></div>
+            </div>
+
+            <div class="ac">
+              <h4>Acceptance Criteria</h4>
+              <ol>
+                <li>사용시간, 환기, 압력, 누출, 알람 요약이 포함된다</li>
+                <li>추세 그래프가 제공된다</li>
+                <li>PDF 다운로드(또는 내보내기)가 가능하다</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Guardrails (Non-User) -->
+    <section class="section" id="guardrails">
+      <div class="head">
+        <div>
+          <h2>4. Non-User Functional Guardrails (PRD 명시)</h2>
+          <p>User Story와 분리하여, 안전/책임/감사 가능한 운영을 위해 반드시 지켜야 하는 시스템 제약을 기술합니다.</p>
+        </div>
+      </div>
+      <div class="body grid2">
+        <div class="box">
+          <h3>안전/책임 구조</h3>
+          <ul class="list">
+            <li>Level 3는 보호자 취소 불가(안전 우선)</li>
+            <li>Level 3 발생 시 의료진 확인(HITL) 강제</li>
+            <li>진단/처방 요청에 대한 안전 응답(면책/상담 권고)</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>감사/보안</h3>
+          <ul class="list">
+            <li>모든 판정/확인/에스컬레이션은 감사 로그 기록</li>
+            <li>PHI 접근은 RBAC(권한 기반) 적용</li>
+            <li>Degraded Mode 전환 조건 및 안내 문구 명시</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        <b>면책</b>: 본 문서는 제품 요구사항(PRD) 목적이며 의료 조언/진단이 아닙니다. 임계값 및 중재 기준은 담당 의료진과 협의하여 설정해야 합니다.
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
