@@ -1,1096 +1,281 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>닥터앤서 3.0 | Hero Header</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr.ANSWER 3.0 | Pediatric AI Monitoring</title>
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
-    />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
 
-    <style>
-      :root {
-        --point-cyan: #38bdf8;
-        --point-violet: #8b5cf6;
-        --text-bright: #ffffff;
-        --text-muted: #94a3b8;
-        --glass-white: rgba(255, 255, 255, 0.05);
-      }
+<style>
 
-      * {
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-        letter-spacing: -0.03em;
-      }
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#ffffff;
+  color:#0f172a;
+  overflow-x:hidden;
+}
 
-      body {
-        margin: 0;
-        font-family: Pretendard, sans-serif;
-        background: transparent; /* 배경 투명 */
-        color: var(--text-bright);
-      }
+/* ================= HERO INTRO ================= */
 
-      .hero-header {
-        position: relative;
-        max-width: 1240px;
-        margin: 0 auto;
-        padding: 60px 24px;
-        overflow: hidden;
-        border-radius: 32px;
-      }
+.hero{
+  position:relative;
+  height:100vh;
+  overflow:hidden;
+}
 
-      /* 히어로 느낌을 내는 배경 글로우 효과 */
-      .hero-header::before {
-        content: "";
-        position: absolute;
-        top: -20%;
-        left: -10%;
-        width: 400px;
-        height: 400px;
-        z-index: 0;
-      }
+canvas{
+  position:absolute;
+  inset:0;
+}
 
-      .hero-header::after {
-        content: "";
-        position: absolute;
-        bottom: -20%;
-        right: -5%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(
-          circle,
-          rgba(139, 92, 246, 0.05) 0%,
-          transparent 70%
-        );
-        z-index: 0;
-      }
+.hero-content{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  opacity:0;
+  transition:2s ease;
+}
 
-      .hero-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
+.hero-content h1{
+  font-size:64px;
+  font-weight:900;
+  margin:0 0 20px 0;
+  letter-spacing:-0.03em;
+}
 
-      .kicker-wrap {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
+.hero-content p{
+  font-size:18px;
+  color:#475569;
+  line-height:1.6;
+}
 
-      .kicker-line {
-        width: 20px;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--point-cyan));
-      }
+/* ================= SECTION ================= */
 
-      .kicker-text {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--point-cyan);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
+.section{
+  padding:120px 24px;
+  max-width:1100px;
+  margin:auto;
+}
 
-      .main-headline {
-        font-size: 35px;
-        font-weight: 800;
-        line-height: 1.2;
-        margin: 0 0 16px 0;
-        background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+.section h2{
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:40px;
+}
 
-      .sub-headline {
-        font-size: 15px;
-        color: var(--text-muted);
-        max-width: 600px;
-        line-height: 1.6;
-        margin-bottom: 32px;
-        word-break: keep-all;
-      }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:40px;
+}
 
-      /* 핵심 기술 칩셋 섹션 */
-      .tech-cluster {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 6px 10px;
-        backdrop-filter: blur(10px);
-      }
+.card{
+  padding:30px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  background:#ffffff;
+  transition:.3s ease;
+}
 
-      .tech-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border-radius: 14px;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        font-size: 13px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-      }
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 40px rgba(0,0,0,0.05);
+}
 
-      .tech-item:hover {
-        background: rgba(56, 189, 248, 0.08);
-        border-color: var(--cyan);
-      }
+.metric{
+  font-size:36px;
+  font-weight:900;
+  color:#2563eb;
+}
 
-      .status-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        box-shadow: 0 0 10px currentColor;
-      }
+.small{
+  font-size:14px;
+  color:#64748b;
+}
 
-      /* 반응형 */
-      @media (max-width: 768px) {
-        .main-headline {
-          font-size: 22px;
-        }
-        .sub-headline {
-          font-size: 13px;
-          padding: 0 20px;
-        }
-        .tech-cluster {
-          flex-direction: column;
-          width: 100%;
-          padding: 12px;
-        }
-        .tech-item {
-          width: 100%;
-          justify-content: center;
-        }
-      }
-    </style>
-  </head>
+.footer{
+  padding:80px 24px;
+  text-align:center;
+  font-size:14px;
+  color:#64748b;
+  border-top:1px solid #e5e7eb;
+}
 
-  <body>
-    <header class="hero-header">
-      <div class="hero-content">
-        <div class="kicker-wrap">
-          <div class="kicker-line"></div>
-          <span class="kicker-text">Dr.Answer 3.0 Project</span>
-          <div class="kicker-line" style="transform: rotate(180deg)"></div>
-        </div>
+/* Responsive */
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+  .hero-content h1{
+    font-size:42px;
+  }
+}
 
-        <h1 class="main-headline">소아 만성호흡부전 능동형 예후관리 플랫폼</h1>
+</style>
+</head>
+<body>
 
-        <p class="sub-headline">
-          가정용 인공호흡기 환아 전문 AI 에이전트가<br />
-          <strong>24시간 공백 없는 의료 안전망</strong>을 실현합니다.
-        </p>
+<!-- ================= HERO ================= -->
 
-        <div class="tech-cluster">
-          <div class="tech-item">
-            <span
-              class="status-dot"
-              style="background: var(--point-cyan); color: var(--point-cyan)"
-            ></span>
-            EMR
-          </div>
-          <div class="tech-item">
-            <span
-              class="status-dot"
-              style="
-                background: var(--point-violet);
-                color: var(--point-violet);
-              "
-            ></span>
-            PEDI:AIR_Agentic AI
-          </div>
-          <div class="tech-item">
-            <span
-              class="status-dot"
-              style="background: #10b981; color: #10b981"
-            ></span>
-            DEVICE_Homevent
-          </div>
-        </div>
-      </div>
-    </header>
-  </body>
-</html>
+<section class="hero">
+  <canvas id="heroCanvas"></canvas>
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      :root {
-        --accent-blue: #38bdf8;
-        --accent-red: #fb7185;
-        --accent-green: #34d399;
-        --text-base: #e2e8f0;
-        --text-muted: #94a3b8;
-        --card-bg: rgba(255, 255, 255, 0.03);
-        --border: rgba(255, 255, 255, 0.1);
-      }
+  <div class="hero-content">
+    <h1>Dr.ANSWER 3.0</h1>
+    <p>
+      소아 만성호흡부전 환자를 위한<br>
+      Agentic AI 기반 재택 모니터링 플랫폼
+    </p>
+  </div>
+</section>
 
-      .bg-section {
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: "Pretendard", sans-serif;
-        color: var(--text-base);
-      }
+<!-- ================= STRATEGIC INTENT ================= -->
 
-      /* 섹션 헤더 */
-      .section-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 32px;
-      }
-      .section-num {
-        font-size: 14px;
-        font-weight: 800;
-        color: var(--accent-blue);
-        background: rgba(56, 189, 248, 0.1);
-        padding: 4px 10px;
-        border-radius: 6px;
-      }
-      .section-title {
-        font-size: 22px;
-        font-weight: 700;
-        margin: 0;
-      }
+<section class="section">
+  <h2>Strategic Intent</h2>
+  <p style="font-size:18px; line-height:1.8; color:#334155;">
+    본 프로젝트는 단순 AI 모델 개발이 아니라,
+    가정용 인공호흡기 의존 소아 환자의 의료 공백을 제거하기 위한
+    <strong>24시간 연속 의사결정 체계 구축</strong>을 목표로 한다.
+  </p>
+</section>
 
-      /* 메인 이슈 레이아웃 */
-      .issue-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin-bottom: 40px;
-      }
+<!-- ================= KEY METRICS ================= -->
 
-      .issue-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 28px;
-        position: relative;
-      }
+<section class="section">
+  <h2>Performance Targets</h2>
 
-      .issue-card h4 {
-        font-size: 17px;
-        margin: 0 0 16px 0;
-        color: var(--accent-blue);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+  <div class="grid">
 
-      .issue-card p {
-        font-size: 14px;
-        line-height: 1.6;
-        color: var(--text-muted);
-        margin: 0 0 16px 0;
-      }
-
-      .unmet-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .unmet-list li {
-        font-size: 13.5px;
-        padding: 8px 12px;
-        background: rgba(251, 113, 133, 0.05);
-        border-radius: 8px;
-        margin-bottom: 8px;
-        color: silver;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .unmet-list li::before {
-        content: "!";
-        font-weight: 900;
-        color: var(--accent-red);
-      }
-
-      /* AS-IS TO-BE 테이블 스타일 */
-      .comparison-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        overflow: hidden;
-      }
-
-      .comparison-table th {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 14px;
-        font-size: 13px;
-        color: var(--text-muted);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .comparison-table td {
-        padding: 16px;
-        font-size: 13.5px;
-        border-bottom: 1px solid var(--border);
-        text-align: center;
-      }
-
-      .col-label {
-        font-weight: 700;
-        color: var(--text-base);
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .col-asis {
-        color: grey;
-      }
-      .col-tobe {
-        color: var(--accent-green);
-        font-weight: 600;
-      }
-
-      .summary-bar {
-        margin-top: 32px;
-        padding: 16px 24px;
-        background: linear-gradient(
-          90deg,
-          rgba(56, 189, 248, 0.15),
-          transparent
-        );
-        border-left: 4px solid var(--accent-blue);
-        border-radius: 0 12px 12px 0;
-        font-size: 14.5px;
-        font-weight: 500;
-      }
-
-      @media (max-width: 850px) {
-        .issue-container {
-          grid-template-columns: 1fr;
-        }
-        .comparison-table {
-          display: block;
-          overflow-x: auto;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h2 class="section-title">사업 환경 및 임상적 미충족 수요</h2>
-      <div class="issue-container">
-        <div class="issue-card">
-          <h4>보호자의 전문성 한계 및 소진</h4>
-          <p>
-            비의료인인 보호자가 인공호흡기의 복잡한 알람 상황에 대해 즉각적인
-            판단과 생명 위협 여부를 구분해야 하는 구조적 한계
-          </p>
-          <ul class="unmet-list">
-            <li>단순 기기 오류와 기도 폐쇄 구분 불가</li>
-            <li>안전을 위한 과잉 응급실 내원 발생</li>
-            <li>독박 간병으로 인한 심리적 번아웃 가중</li>
-          </ul>
-        </div>
-
-        <div class="issue-card">
-          <h4>데이터 분절로 인한 진료 단절</h4>
-          <p>
-            입원 시 정밀 EMR 데이터와 퇴원 후 가정 내 인공호흡기 로그, PRO(환자
-            증상 기록) 데이터가 연동되지 못하고 파편화됨
-          </p>
-          <ul class="unmet-list">
-            <li>보호자의 주관적 기억에 의존한 외래 진료</li>
-            <li>재택 기간 중 악화 신호 확인 불가</li>
-            <li>데이터 기반 의사결정 체계 부재</li>
-          </ul>
-        </div>
-      </div>
-
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th width="20%">구분</th>
-            <th width="40%">현행 체계 (AS-IS)</th>
-            <th width="40%">닥터앤서 3.0 목표 (TO-BE)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-label">관리 방식</td>
-            <td class="col-asis">사후 대응형 수동 모니터링</td>
-            <td class="col-tobe">Agentic AI 기반 능동적 예방 관리</td>
-          </tr>
-          <tr>
-            <td class="col-label">의사결정 근거</td>
-            <td class="col-asis">보호자의 주관적 진술</td>
-            <td class="col-tobe">EMR-의료기기 통합 데이터 분석</td>
-          </tr>
-          <tr>
-            <td class="col-label">응급 대응</td>
-            <td class="col-asis">지연 조치 또는 과잉 내원</td>
-            <td class="col-tobe">Triage Agent 기반 행동 가이드</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="summary-bar">
-        닥터앤서 3.0은 <strong>데이터 통합과 Agentic AI</strong>를 통해 소아
-        재택 관리의 <strong>‘Care Gap’을 구조적으로 해소</strong>합니다.
-      </div>
+    <div class="card">
+      <div class="metric">50% ↓</div>
+      응급실 내원율 감소
+      <div class="small">재택 관리 실효성 검증</div>
     </div>
-  </body>
-</html>
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
-    />
-
-    <style>
-      :root {
-        --point-blue: #38bdf8;
-        --point-violet: #8b5cf6;
-        --point-emerald: #10b981;
-        --border: rgba(255, 255, 255, 0.12);
-        --text-main: #f8fafc;
-        --text-dim: #94a3b8;
-      }
-
-      * {
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-        letter-spacing: -0.04em;
-      }
-
-      body {
-        margin: 0;
-        font-family: Pretendard, sans-serif;
-        background: transparent;
-        color: var(--text-main);
-      }
-
-      .wrap {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 48px 20px;
-      }
-
-      /* =======================
-            Section title
-            ======================= */
-      .section-title {
-        font-size: 24px;
-        font-weight: 800;
-        margin-bottom: 28px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .section-title::before {
-        content: "";
-        width: 4px;
-        height: 20px;
-        background: var(--point-blue);
-        border-radius: 2px;
-      }
-
-      /* =======================
-            Summary
-            ======================= */
-      .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        margin-bottom: 56px;
-      }
-
-      .sum-card {
-        padding: 20px 24px;
-        position: relative;
-      }
-
-      .sum-card::after {
-        content: "";
-        position: absolute;
-        bottom: -12px;
-        left: 20%;
-        right: 20%;
-        height: 1px;
-        background: linear-gradient(
-          to right,
-          transparent,
-          rgba(255, 255, 255, 0.25),
-          transparent
-        );
-      }
-
-      .sum-label {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        color: var(--point-blue);
-        margin-bottom: 10px;
-        display: block;
-      }
-
-      .sum-value {
-        font-size: 15px;
-        font-weight: 600;
-        line-height: 1.6;
-      }
-
-      /* =======================
-            TRI-Agentic AI
-            ======================= */
-      .tech-box {
-        margin-bottom: 64px;
-      }
-
-      .tech-header {
-        text-align: center;
-        margin-bottom: 32px;
-      }
-
-      .tech-header h3 {
-        margin: 6px 0 0;
-        font-size: 20px;
-        font-weight: 800;
-      }
-
-      .tech-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-      }
-
-      .agent-card {
-        position: relative;
-        padding-left: 18px;
-      }
-
-      .agent-card::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 4px;
-        bottom: 4px;
-        width: 2px;
-        background: linear-gradient(to bottom, var(--point-blue), transparent);
-      }
-
-      .agent-icon {
-        font-size: 18px;
-        margin-bottom: 6px;
-        display: block;
-      }
-
-      .agent-name {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 6px;
-        color: var(--point-blue);
-      }
-
-      .agent-desc {
-        font-size: 12px;
-        color: var(--text-dim);
-        line-height: 1.5;
-      }
-
-      .tech-pill {
-        display: inline-block;
-        margin-top: 8px;
-        font-size: 10px;
-        padding: 3px 8px;
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        color: var(--point-blue);
-      }
-      .hos-pill {
-        display: inline-block;
-        margin-top: 8px;
-        font-size: 10px;
-        padding: 3px 8px;
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        color: red;
-        background: whitesmoke;
-      }
-
-      /* =======================
-            Validation / Hospitals
-            ======================= */
-      .data-sink {
-        margin-top: 44px;
-        padding-top: 18px;
-        border-top: 2px solid var(--border);
-        text-align: center;
-      }
-
-      .hospital-strip {
-        margin-top: 24px;
-        padding-top: 14px;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-      }
-
-      .strip-label {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        color: var(--point-emerald);
-        display: block;
-        margin-bottom: 12px;
-        text-align: center;
-      }
-
-      /* 가로 전체 채우는 병원 스트립 */
-      .strip-line {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      }
-
-      .hosp-col {
-        text-align: center;
-        padding: 10px 6px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-dim);
-        position: relative;
-      }
-
-      .hosp-col:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        top: 25%;
-        right: 0;
-        width: 1px;
-        height: 50%;
-        background: rgba(255, 255, 255, 0.12);
-      }
-
-      .hosp-col.cross {
-        color: #a78bfa;
-      }
-      .hosp-col.multi {
-        color: #34d399;
-      }
-
-      .strip-desc {
-        margin-top: 10px;
-        font-size: 12px;
-        color: var(--text-dim);
-        line-height: 1.5;
-        text-align: center;
-      }
-
-      /* =======================
-            Roadmap
-            ======================= */
-      .road-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 28px;
-        margin-top: 64px;
-      }
-
-      .road-card {
-        padding-top: 14px;
-        border-top: 3px solid var(--border);
-      }
-
-      .road-card.now {
-        border-color: var(--point-violet);
-      }
-
-      .road-year {
-        font-size: 18px;
-        font-weight: 900;
-        color: var(--text-dim);
-        margin-bottom: 6px;
-      }
-
-      .road-card.now .road-year {
-        color: var(--point-violet);
-      }
-
-      .road-title {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-
-      .road-desc {
-        font-size: 12px;
-        color: var(--text-dim);
-        line-height: 1.6;
-      }
-
-      @media (max-width: 900px) {
-        .summary-grid,
-        .tech-grid,
-        .road-grid,
-        .strip-line {
-          grid-template-columns: 1fr;
-        }
-
-        .hosp-col:not(:last-child)::after {
-          display: none;
-        }
-      }
-      .mini-grid-bottom {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        max-width: 600px; /* 하단은 더 좁게 배치 */
-        margin: 0 auto;
-      }
-
-      .mini-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 16px 12px;
-        text-align: center;
-        transition: border-color 0.2s;
-      }
-
-      .mini-card:hover {
-        border-color: #38bdf8;
-      }
-
-      .tag {
-        font-size: 9px;
-        font-weight: 800;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-bottom: 8px;
-        display: inline-block;
-      }
-
-      .tag-cross {
-        background: rgba(252, 252, 252, 0.1);
-        color: #a78bfa;
-      }
-      .tag-cross2 {
-        background: rgba(252, 252, 252, 0.1);
-        color: #34d399;
-      }
-
-      .tag-multi {
-        background: rgba(16, 185, 129, 0.1);
-        color: #34d399;
-      }
-
-      .hosp-name {
-        font-size: 14px;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      .hosp-task {
-        font-size: 11px;
-        color: #94a3b8;
-        line-height: 1.3;
-      }
-
-      @media (max-width: 600px) {
-        .mini-grid,
-        .mini-grid-bottom {
-          grid-template-columns: 1fr;
-          max-width: 100%;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="wrap">
-      <!-- Summary -->
-      <h2 class="section-title">재택 환아 가정용 인공호흡기 관리 개요</h2>
-      <div class="summary-grid">
-        <div class="sum-card">
-          <span class="sum-label">TARGET</span>
-          <div class="sum-value">
-            가정용 인공호흡기에 의존하는<br />
-            <strong>중증 소아 환자 및 보호자</strong>
-          </div>
-        </div>
-        <div class="sum-card">
-          <span class="sum-label">PROBLEM</span>
-          <div class="sum-value">
-            퇴원 이후 관리 공백으로 인한<br />
-            <strong>심리적 소진 및 불필요한 내원</strong>
-          </div>
-        </div>
-        <div class="sum-card">
-          <span class="sum-label">SOLUTION</span>
-          <div class="sum-value">
-            EMR 연계 <strong>TRI-Agentic AI</strong> 기반<br />
-            24/7 재택 관리 체계
-          </div>
-        </div>
-      </div>
-
-      <!-- TRI-Agentic AI -->
-      <div class="tech-box">
-        <div class="tech-header">
-          <span class="sum-label">TECHNOLOGY ARCHITECTURE</span>
-          <h3>TRI-Agentic AI Structure</h3>
-        </div>
-
-        <div class="tech-grid">
-          <div class="agent-card">
-            <span class="agent-icon">📊</span>
-            <div class="agent-name">Monitoring</div>
-            <div class="agent-desc">실시간 호흡 파라미터 및 알람 감시</div>
-            <span class="tech-pill">Waveform / SQI</span>
-          </div>
-          <div class="agent-card">
-            <span class="agent-icon">🚥</span>
-            <div class="agent-name">Triage</div>
-            <div class="agent-desc">PaedCTAS 기반 위험도 분류</div>
-            <span class="tech-pill">Rule + ML</span>
-          </div>
-          <div class="agent-card">
-            <span class="agent-icon">💬</span>
-            <div class="agent-name">Clinical Q&A</div>
-            <div class="agent-desc">EMR 문맥 기반 맞춤형 상담</div>
-            <span class="tech-pill">RAG + LLM</span>
-          </div>
-          <div class="agent-card">
-            <span class="agent-icon">📝</span>
-            <div class="agent-name">Reporting</div>
-            <div class="agent-desc">의료진 의사결정 지원 리포트</div>
-            <span class="tech-pill">FHIR / Summary</span>
-          </div>
-        </div>
-
-        <!-- Validation -->
-      </div>
-
-      <!-- TRI-Agentic AI -->
-      <div class="tech-box">
-        <div class="tech-header">
-          <span class="sum-label">MULTICENTER VALIDATION</span>
-          <h3>다기관 학습과 검증 및 실증</h3>
-
-          <div class="wrap">
-            <!-- Validation -->
-
-            <div class="strip-line">
-              <div class="hosp-col cross">
-                <span
-                  class="tag tag-cross2"
-                  style="background-color: #fb7185; color: #e2e8f0"
-                  >교차검증</span
-                >
-                <div class="agent-desc" h2>신촌세브란스병원</div>
-              </div>
-
-              <div class="hosp-col cross">
-                <span
-                  class="tag tag-cross2"
-                  style="background-color: #fb7185; color: #e2e8f0"
-                  >교차검증</span
-                >
-                <div class="agent-desc" h2>삼성서울병원</div>
-              </div>
-
-              <div class="hosp-col cross">
-                <span
-                  class="tag tag-cross2"
-                  style="background-color: #fb7185; color: #e2e8f0"
-                  >교차검증</span
-                >
-                <div class="agent-desc" h2>서울아산병원</div>
-              </div>
-
-              <div class="hosp-col cross">
-                <span
-                  class="tag tag-cross2"
-                  style="background-color: darkcyan; color: #e2e8f0"
-                  >다기관실증</span
-                >
-                <div class="agent-desc" h2>서울대병원</div>
-              </div>
-
-              <div class="hosp-col cross">
-                <span
-                  class="tag tag-cross2"
-                  style="background-color: darkcyan; color: #e2e8f0"
-                  >다기관실증</span
-                >
-                <div class="agent-desc" h2>전남대병원</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="card">
+      <div class="metric">≥90%</div>
+      위험 감지 민감도
+      <div class="small">임상 적용 가능 수준</div>
     </div>
-  </body>
-</html>
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
-    />
-
-    <style>
-      :root {
-        --blue: #38bdf8;
-        --violet: #8b5cf6;
-        --line: rgba(255, 255, 255, 0.12);
-        --txt-main: #f8fafc;
-        --txt-dim: #94a3b8;
-      }
-
-      body {
-        margin: 0;
-        font-family: Pretendard, sans-serif;
-        background: transparent;
-        color: var(--txt-main);
-      }
-
-      .wrap {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 60px 20px;
-      }
-
-      /* Title */
-      .section-title {
-        font-size: 24px;
-        font-weight: 800;
-        margin-bottom: 40px;
-      }
-
-      /* Progress */
-      .progress {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-      }
-
-      .step {
-        border-top: 2px solid var(--line);
-        padding-top: 20px;
-      }
-
-      .step.now {
-        border-color: var(--violet);
-      }
-
-      .year {
-        font-size: 18px;
-        font-weight: 800;
-        margin-bottom: 8px;
-        color: var(--txt-dim);
-      }
-
-      .step.now .year {
-        color: var(--violet);
-      }
-
-      .title {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-
-      .desc {
-        font-size: 12px;
-        line-height: 1.6;
-        color: var(--txt-dim);
-      }
-
-      .tag {
-        display: inline-block;
-        margin-top: 10px;
-        font-size: 10px;
-        padding: 3px 8px;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        color: var(--blue);
-      }
-
-      /* Mobile */
-      @media (max-width: 900px) {
-        .progress {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="wrap">
-      <div class="progress">
-        <div class="step">
-          <div class="year">2025</div>
-          <div class="title">Infrastructure Setup</div>
-          <div class="desc">
-            데이터 수집·연계 구조 설계<br />
-            T-Bridge 기반 시스템 아키텍처 정립
-          </div>
-          <span class="tag">Architecture</span>
-        </div>
-
-        <div class="step now">
-          <div class="year">2026</div>
-          <div class="title">Model Development</div>
-          <div class="desc">
-            소아 특화 LLM 학습·검증<br />
-            임상 적용을 고려한 운영 구조 고도화
-          </div>
-          <span class="tag">Core Phase</span>
-        </div>
-
-        <div class="step">
-          <div class="year">2027</div>
-          <div class="title">Clinical Validation</div>
-          <div class="desc">
-            다기관 실증 연구 수행<br />
-            SaMD 규제 요건 충족
-          </div>
-          <span class="tag">Validation</span>
-        </div>
-
-        <div class="step">
-          <div class="year">2028</div>
-          <div class="title">Scale-up</div>
-          <div class="desc">
-            수가·확산 전략 수립<br />
-            서비스 및 질환 범위 확장
-          </div>
-          <span class="tag">Expansion</span>
-        </div>
-      </div>
+    <div class="card">
+      <div class="metric">&lt;5 sec</div>
+      실시간 알림 SLA
+      <div class="small">Edge 기반 즉시 대응</div>
     </div>
-  </body>
+
+    <div class="card">
+      <div class="metric">SaMD</div>
+      Class II 인허가
+      <div class="small">상용화 전환 기반 확보</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= OPERATING MODEL ================= -->
+
+<section class="section">
+  <h2>Operating Model</h2>
+  <p style="font-size:18px; line-height:1.8; color:#334155;">
+    Monitoring → Triage → Intervention → Feedback으로 이어지는
+    Multi-Agent Orchestration 기반 폐쇄 루프 구조를 구현한다.
+  </p>
+</section>
+
+<div class="footer">
+© 2026 Dr.ANSWER 3.0 | Pediatric AI Monitoring Platform
+</div>
+
+<!-- ================= THREE JS ================= -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({
+  canvas:document.getElementById("heroCanvas"),
+  alpha:true
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.z = 60;
+
+function textToPoints(text){
+  const canvas=document.createElement("canvas");
+  const ctx=canvas.getContext("2d");
+  canvas.width=1600;
+  canvas.height=400;
+  ctx.font="bold 220px Inter";
+  ctx.textAlign="center";
+  ctx.fillText(text,canvas.width/2,250);
+  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const pts=[];
+  for(let y=0;y<canvas.height;y+=5){
+    for(let x=0;x<canvas.width;x+=5){
+      const i=(y*canvas.width+x)*4;
+      if(data[i+3]>150){
+        pts.push({
+          x:(x-canvas.width/2)/120,
+          y:(canvas.height/2-y)/120,
+          z:(Math.random()-0.5)*6
+        });
+      }
+    }
+  }
+  return pts;
+}
+
+const pts=textToPoints("DR.ANSWER");
+const count=pts.length;
+
+const geo=new THREE.BufferGeometry();
+const pos=new Float32Array(count*3);
+
+for(let i=0;i<count;i++){
+  pos[i*3]=(Math.random()-0.5)*120;
+  pos[i*3+1]=(Math.random()-0.5)*120;
+  pos[i*3+2]=(Math.random()-0.5)*120;
+}
+
+geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+
+const mat=new THREE.PointsMaterial({
+  size:0.08,
+  color:0x0f172a,
+  transparent:true,
+  opacity:0.9
+});
+
+const particles=new THREE.Points(geo,mat);
+scene.add(particles);
+
+function animate(){
+  requestAnimationFrame(animate);
+  const arr=geo.attributes.position.array;
+
+  for(let i=0;i<count;i++){
+    arr[i*3]+= (pts[i].x-arr[i*3])*0.03;
+    arr[i*3+1]+= (pts[i].y-arr[i*3+1])*0.03;
+    arr[i*3+2]+= (pts[i].z-arr[i*3+2])*0.03;
+  }
+
+  geo.attributes.position.needsUpdate=true;
+  renderer.render(scene,camera);
+}
+
+animate();
+
+setTimeout(()=>{
+  document.querySelector(".hero-content").style.opacity=1;
+},3000);
+
+</script>
+
+</body>
 </html>
